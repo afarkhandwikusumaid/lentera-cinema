@@ -50,11 +50,11 @@ export default function Hero() {
         </p>
         <div className="glass rounded-[24px] md:rounded-full p-5 md:px-8 md:py-4 flex flex-wrap md:flex-nowrap items-center justify-center gap-3 w-fit mx-auto border border-white/10 shadow-2xl bg-black/40 backdrop-blur-xl">
           {TOOLS.map((tool, i) => (
-            <button key={i} onClick={() => window.location.href = `/layanan/${tool.name.toLowerCase()}`} 
-              className="flex items-center gap-2 bg-white/5 hover:bg-white/15 border border-white/10 rounded-full px-4 md:px-5 py-2 md:py-2.5 transition-all duration-300 shrink-0">
+            <div key={i} 
+              className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 md:px-5 py-2 md:py-2.5 shrink-0">
               <span className="text-white/80 scale-90">{tool.icon}</span>
               <span className="text-xs md:text-sm font-semibold text-white tracking-wide whitespace-nowrap">{tool.name}</span>
-            </button>
+            </div>
           ))}
         </div>
       </div>
