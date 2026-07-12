@@ -2,17 +2,10 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
-const LINKS_LEFT = [
-  { label: 'Yearbook', href: '/layanan/yearbook' },
-  { label: 'Wisuda', href: '/layanan/wisuda' },
-  { label: 'Wedding', href: '/layanan/wedding' },
-  { label: 'Event', href: '/layanan/foto-event' },
-  { label: 'Komersial', href: '/layanan/dokumentasi-product' },
-];
-
-const LINKS_RIGHT = [
+const LINKS = [
+  { label: 'Home', href: '/' },
   { label: 'Portofolio', href: '/portfolio' },
   { label: 'Testimoni', href: '/testimonials' },
   { label: 'Tentang Kami', href: '/about' },
@@ -41,23 +34,12 @@ export default function Nav() {
             <Link href="/" className="flex items-center gap-1.5 shrink-0">
               <img src="/logo.png" alt="Lentera Cinema" className="h-8 md:h-10 object-contain" />
             </Link>
-
-            {/* Desktop Links Left (Services) */}
-            <div className="hidden lg:flex items-center gap-6">
-              {LINKS_LEFT.map(l => (
-                <Link key={l.href} href={l.href}
-                  className={`text-[13px] font-medium transition-colors flex items-center gap-1.5 ${path.startsWith(l.href) ? 'text-white' : 'text-white/70 hover:text-white'}`}>
-                  {l.label}
-                  <ChevronDown size={12} className="opacity-50" />
-                </Link>
-              ))}
-            </div>
           </div>
 
           {/* Right actions */}
           <div className="flex items-center gap-4">
             <div className="hidden md:flex items-center gap-6 mr-4">
-              {LINKS_RIGHT.map(l => (
+              {LINKS.map(l => (
                 <Link key={l.href} href={l.href}
                   className={`text-[13px] font-medium transition-colors ${path === l.href ? 'text-white' : 'text-white/70 hover:text-white'}`}>
                   {l.label}
@@ -88,18 +70,8 @@ export default function Nav() {
             </div>
             
             <div className="flex-1 flex flex-col px-6 py-8 gap-2 overflow-y-auto no-scrollbar">
-              <div className="text-[10px] uppercase tracking-[0.2em] text-[#e8b84b] font-bold px-4 pt-2 pb-3">Services</div>
-              {LINKS_LEFT.map(l => (
-                <Link key={l.href} href={l.href}
-                  className={`px-4 py-3.5 rounded-2xl text-base transition-all duration-300 ${path.startsWith(l.href) ? 'bg-white/10 text-white font-bold' : 'text-white/70 hover:text-white hover:bg-white/5'}`}>
-                  {l.label}
-                </Link>
-              ))}
-              
-              <div className="h-px bg-white/5 my-6 mx-4" />
-              
-              <div className="text-[10px] uppercase tracking-[0.2em] text-[#e8b84b] font-bold px-4 pb-3">Menu</div>
-              {LINKS_RIGHT.map(l => (
+              <div className="text-[10px] uppercase tracking-[0.2em] text-[#e8b84b] font-bold px-4 pt-2 pb-3">Menu Utama</div>
+              {LINKS.map(l => (
                 <Link key={l.href} href={l.href}
                   className={`px-4 py-3.5 rounded-2xl text-base transition-all duration-300 ${path === l.href ? 'bg-white/10 text-white font-bold' : 'text-white/70 hover:text-white hover:bg-white/5'}`}>
                   {l.label}

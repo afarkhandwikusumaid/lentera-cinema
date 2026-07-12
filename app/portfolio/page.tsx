@@ -74,24 +74,7 @@ export default function PortfolioPage() {
 
           {!loading && (
             <>
-              {/* Category Filter */}
-              <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
-                <button 
-                  onClick={() => setFilter('all')}
-                  className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 ${filter === 'all' ? 'bg-[#e8b84b] text-black shadow-[0_0_15px_rgba(232,184,75,0.4)]' : 'bg-[#1a1a1a] text-white/60 hover:text-white border border-white/10 hover:border-white/30'}`}
-                >
-                  Semua
-                </button>
-                {services.map(s => (
-                  <button 
-                    key={s.id}
-                    onClick={() => setFilter(s.id)}
-                    className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 ${filter === s.id ? 'bg-[#e8b84b] text-black shadow-[0_0_15px_rgba(232,184,75,0.4)]' : 'bg-[#1a1a1a] text-white/60 hover:text-white border border-white/10 hover:border-white/30'}`}
-                  >
-                    {s.name}
-                  </button>
-                ))}
-              </div>
+              {/* Category filters removed as requested */}
 
               {/* Gallery */}
               {activeTab === 'image' ? (
@@ -170,13 +153,7 @@ export default function PortfolioPage() {
                               className="w-full h-full object-cover" 
                               onError={(e) => { e.currentTarget.src = '/images/yearbook.png'; }}
                             />
-                            
-                            {/* Minimal subtle hover for category name */}
-                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                              <span className="text-xs uppercase tracking-[0.2em] text-white font-bold border border-white/30 px-4 py-2 backdrop-blur-sm text-center">
-                                {item.service_name}
-                              </span>
-                            </div>
+                            {/* The user mentioned the photo will have its own text/title, so we remove the overlay */}
                           </div>
                         </div>
                       );
@@ -278,12 +255,7 @@ export default function PortfolioPage() {
               className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl" 
               onError={(e) => { e.currentTarget.src = '/images/yearbook.png'; }}
             />
-            <div className="mt-6 text-center">
-              <span className="text-[10px] uppercase tracking-[0.2em] text-[#e8b84b] font-bold border border-[#e8b84b]/30 px-3 py-1 rounded-full mb-3 inline-block">
-                {modalImage.service_name}
-              </span>
-              <h3 className="text-xl md:text-2xl font-bold text-white mt-2">{modalImage.title}</h3>
-            </div>
+            {/* Text overlay removed as requested */}
           </div>
         </div>
       )}

@@ -48,7 +48,11 @@ export default function ClientsAdmin() {
     setFormData({});
   };
 
-  if (loading) return <div className="p-10 text-gray-500">Memuat data...</div>;
+  if (loading) return (
+    <AdminLayout>
+      <div className="p-10 text-gray-500">Memuat data...</div>
+    </AdminLayout>
+  );
 
   if (isEditing) {
     return (

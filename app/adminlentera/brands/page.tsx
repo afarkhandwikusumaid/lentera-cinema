@@ -10,6 +10,8 @@ export default function BrandsAdmin() {
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<Partial<Brand>>({});
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -23,6 +25,7 @@ export default function BrandsAdmin() {
 
   const handleEdit = (brand: Brand) => {
     setFormData(brand);
+    setUploadFile(null);
     setIsEditing(true);
   };
 
@@ -35,10 +38,41 @@ export default function BrandsAdmin() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setUploading(true);
+
+    let logoUrl = formData.logo_url || '';
+
+    if (uploadFile) {
+      const uploadData = new FormData();
+      uploadData.append('file', uploadFile);
+
+      try {
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: uploadData,
+        });
+        
+        const resData = await res.json();
+        
+        if (!res.ok) {
+          alert(resData.message || 'Gagal mengunggah logo');
+          setUploading(false);
+          return;
+        }
+
+        logoUrl = resData.url;
+      } catch (err) {
+        console.error('Upload error', err);
+        alert('Terjadi kesalahan saat mengunggah file.');
+        setUploading(false);
+        return;
+      }
+    }
+
     const newBrand: Brand = {
       id: formData.id || 'brand-' + Date.now().toString(),
       name: formData.name || '',
-      logo_url: formData.logo_url || '',
+      logo_url: logoUrl,
       is_active: formData.is_active ?? true,
       order: formData.order || 0
     };
@@ -47,9 +81,15 @@ export default function BrandsAdmin() {
     setBrands(updated);
     setIsEditing(false);
     setFormData({});
+    setUploadFile(null);
+    setUploading(false);
   };
 
-  if (loading) return <div className="p-10 text-gray-500">Memuat data...</div>;
+  if (loading) return (
+    <AdminLayout>
+      <div className="p-10 text-gray-500">Memuat data...</div>
+    </AdminLayout>
+  );
 
   if (isEditing) {
     return (
@@ -64,9 +104,19 @@ export default function BrandsAdmin() {
                    value={formData.name || ''} onChange={e => setFormData({...formData, name: e.target.value})} />
           </div>
           <div>
-            <label className="block text-xs font-bold text-gray-500 mb-1">URL Logo (PNG Transparan disarankan)</label>
-            <input required type="text" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm" 
-                   value={formData.logo_url || ''} onChange={e => setFormData({...formData, logo_url: e.target.value})} />
+            <label className="block text-xs font-bold text-gray-500 mb-1">Logo (Maks 1MB, format gambar diizinkan)</label>
+            {formData.logo_url && !uploadFile && (
+              <div className="mb-2">
+                <img src={formData.logo_url} alt="Current logo" className="h-12 object-contain bg-gray-100 p-2 rounded border" />
+              </div>
+            )}
+            <input type="file" accept="image/*" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-sm" 
+                   onChange={e => {
+                     if (e.target.files && e.target.files.length > 0) {
+                       setUploadFile(e.target.files[0]);
+                     }
+                   }} />
+            <p className="text-[10px] text-gray-400 mt-1">Kosongkan jika tidak ingin mengubah logo saat ini.</p>
           </div>
           <div>
             <label className="block text-xs font-bold text-gray-500 mb-1">Urutan Tampil</label>
@@ -79,8 +129,10 @@ export default function BrandsAdmin() {
             <label htmlFor="active" className="text-sm font-medium text-gray-700">Aktif (Tampil di website)</label>
           </div>
           <div className="flex gap-3 pt-4">
-            <button type="submit" className="bg-[#c29631] text-white px-4 py-2 rounded-lg text-sm font-bold">Simpan</button>
-            <button type="button" onClick={() => setIsEditing(false)} className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-bold">Batal</button>
+            <button type="submit" disabled={uploading} className="bg-[#c29631] text-white px-4 py-2 rounded-lg text-sm font-bold disabled:opacity-50">
+              {uploading ? 'Menyimpan...' : 'Simpan'}
+            </button>
+            <button type="button" onClick={() => setIsEditing(false)} disabled={uploading} className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-bold disabled:opacity-50">Batal</button>
           </div>
         </form>
       </div>
@@ -97,7 +149,7 @@ export default function BrandsAdmin() {
           <h1 className="text-2xl font-bold font-heading text-text-primary mb-1">Mitra & Brand Klien</h1>
           <p className="text-sm text-text-secondary">Kelola logo klien besar (BUMN, Perusahaan, dll)</p>
         </div>
-        <button onClick={() => { setFormData({}); setIsEditing(true); }} className="flex items-center gap-2 px-4 py-2 bg-accent-primary text-white rounded-xl font-bold transition-colors self-start md:self-auto">
+        <button onClick={() => { setFormData({}); setUploadFile(null); setIsEditing(true); }} className="flex items-center gap-2 px-4 py-2 bg-accent-primary text-white rounded-xl font-bold transition-colors self-start md:self-auto">
           <Plus className="h-4 w-4" /> Tambah Brand
         </button>
       </div>

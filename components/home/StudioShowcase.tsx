@@ -27,12 +27,12 @@ export default function StudioShowcase() {
       <div className="relative flex flex-col items-center">
         
         {/* CARDS (Z-10) overlapping the image below */}
-        <div className="relative z-10 w-full max-w-[1200px] px-6 mx-auto flex md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 overflow-x-auto snap-x snap-mandatory pb-8 md:pb-0 no-scrollbar items-stretch">
+        <div className="relative z-10 w-full max-w-[1200px] px-6 mx-auto flex lg:grid lg:grid-cols-4 gap-4 overflow-x-auto snap-x snap-mandatory pb-8 lg:pb-0 no-scrollbar items-stretch">
           {[
-            { icon: AI_ICONS.Image, t: 'Foto Wisuda', d: 'Sesi foto wisuda studio dan outdoor beresolusi tinggi dengan lighting profesional.' },
-            { icon: AI_ICONS.Video, t: 'Video Sinematik', d: 'Dokumentasi video bergaya film bioskop yang menangkap emosi setiap momen.' },
-            { icon: AI_ICONS.Voice, t: 'Wedding Organizer', d: 'Liputan lengkap akad dan resepsi dengan highlight film sinematik mewah.' },
-            { icon: AI_ICONS.Music, t: 'Yearbook Premium', d: 'Buku kenangan sekolah dengan material cetak eksklusif dan drone b-roll.' },
+            { slug: 'yearbook', icon: AI_ICONS.Music, t: 'Yearbook Premium', d: 'Buku kenangan sekolah dengan material cetak eksklusif dan drone b-roll.' },
+            { slug: 'wisuda', icon: AI_ICONS.Image, t: 'Dokumentasi Wisuda', d: 'Sesi foto dan video wisuda beresolusi tinggi dengan lighting profesional.' },
+            { slug: 'wedding', icon: AI_ICONS.Voice, t: 'Wedding Organizer', d: 'Liputan lengkap akad dan resepsi dengan highlight film sinematik mewah.' },
+            { slug: 'foto-event', icon: AI_ICONS.Video, t: 'Dokumentasi Event', d: 'Dokumentasi acara formal maupun non-formal dengan konsep visual estetik.' },
           ].map((tool, i) => (
             <div key={i} 
               className="glass rounded-[24px] p-6 flex flex-col hover:bg-white/[0.04] transition-all duration-300 relative overflow-hidden group border border-white/5 shadow-2xl min-w-[280px] w-[85vw] md:w-auto shrink-0 snap-center">
@@ -42,7 +42,7 @@ export default function StudioShowcase() {
                 {tool.d}
               </p>
               <div className="flex items-center justify-between mt-auto gap-2">
-                <a href="/portfolio" className="text-[13px] text-white/80 hover:text-white font-semibold transition-colors underline underline-offset-4 decoration-white/20 hover:decoration-white">
+                <a href={`/layanan/${tool.slug}`} className="text-[13px] text-white/80 hover:text-white font-semibold transition-colors underline underline-offset-4 decoration-white/20 hover:decoration-white">
                   Selengkapnya
                 </a>
                 <a href="https://wa.me/6285944629716" target="_blank" rel="noreferrer" 
