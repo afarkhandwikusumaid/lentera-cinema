@@ -45,7 +45,7 @@ export default function StudioShowcase() {
                 <a href={`/layanan/${tool.slug}`} className="text-[13px] text-white/80 hover:text-white font-semibold transition-colors underline underline-offset-4 decoration-white/20 hover:decoration-white">
                   Selengkapnya
                 </a>
-                <a href="https://wa.me/6285944629716" target="_blank" rel="noreferrer" 
+                <a href={`https://wa.me/6285944629716?text=Halo%20Lentera%20Cinema,%20saya%20tertarik%20dengan%20layanan%20${encodeURIComponent(tool.t)}.%20Boleh%20minta%20info%20lebih%20lanjut?`} target="_blank" rel="noreferrer" 
                    className="px-5 py-2.5 rounded-full bg-gradient-to-r from-white to-white/90 text-black text-[12px] font-bold hover:from-white/95 hover:to-white/85 shadow-lg active:scale-95 transition-all duration-200">
                   Pesan
                 </a>
@@ -68,7 +68,7 @@ export default function StudioShowcase() {
             
             {/* Fake input at bottom center */}
             <div className="absolute bottom-8 inset-x-0 flex justify-center">
-              <a href="https://wa.me/6285944629716" target="_blank" rel="noreferrer" className="bg-black/35 backdrop-blur-md rounded-full px-6 py-3 flex items-center justify-between gap-10 border border-white/10 w-full max-w-md group cursor-pointer hover:bg-black/50 transition-colors">
+              <a href="https://wa.me/6285944629716?text=Halo%20Lentera%20Cinema,%20saya%20ingin%20menceritakan%20konsep%20dokumentasi%20impian%20saya." target="_blank" rel="noreferrer" className="bg-black/35 backdrop-blur-md rounded-full px-6 py-3 flex items-center justify-between gap-10 border border-white/10 w-full max-w-md group cursor-pointer hover:bg-black/50 transition-colors">
                 <span className="text-[13px] text-white/50 group-hover:text-white/80 transition-colors">Ceritakan konsep dokumentasi impian Anda...</span>
                 <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors">
                   <ArrowRight size={14} className="text-white" />

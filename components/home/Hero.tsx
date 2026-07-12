@@ -36,7 +36,7 @@ export default function Hero() {
         </p>
         
         <div className="fade-up" style={{ animationDelay: '0.2s' }}>
-          <a href="https://wa.me/6285944629716?text=Halo%20Lentera%20Cinema,%20saya%20tertarik%20untuk%20konsultasi%20layanan%20dokumentasi." target="_blank" rel="noreferrer" 
+          <a href="https://wa.me/6285944629716?text=Halo%20Lentera%20Cinema,%20saya%20ingin%20konsultasi%20mengenai%20pembuatan%20video%20atau%20dokumentasi." target="_blank" rel="noreferrer" 
              className="glow-btn inline-block px-10 py-3.5 rounded-full text-base font-bold tracking-wide">
             Konsultasi Sekarang
           </a>

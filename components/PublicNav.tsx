@@ -47,7 +47,7 @@ export default function Nav() {
               ))}
             </div>
             
-            <a href="https://wa.me/6285944629716?text=Halo%20Lentera%20Cinema,%20saya%20tertarik%20untuk%20konsultasi%20layanan%20dokumentasi." target="_blank" rel="noreferrer"
+            <a href="https://wa.me/6285944629716?text=Halo%20Lentera%20Cinema,%20saya%20ingin%20melakukan%20booking%20layanan%20dokumentasi." target="_blank" rel="noreferrer"
               className="px-5 py-2 rounded-full bg-gradient-to-r from-[#e8b84b] to-[#f5d06e] text-black text-[13px] font-bold hover:brightness-110 transition-all hidden md:flex">
               Booking WhatsApp
             </a>
@@ -80,7 +80,7 @@ export default function Nav() {
             </div>
             
             <div className="p-8 border-t border-white/5 bg-[#0a0a0a]">
-              <a href="https://wa.me/6285944629716?text=Halo%20Lentera%20Cinema,%20saya%20tertarik%20untuk%20konsultasi%20layanan%20dokumentasi." target="_blank" rel="noreferrer"
+              <a href="https://wa.me/6285944629716?text=Halo%20Lentera%20Cinema,%20saya%20ingin%20melakukan%20booking%20layanan%20dokumentasi." target="_blank" rel="noreferrer"
                 className="w-full flex items-center justify-center py-4 rounded-full bg-[#e8b84b] hover:bg-[#f5d06e] text-black font-bold text-sm tracking-wide hover:brightness-110 active:scale-95 transition-all duration-200">
                 Konsultasi WhatsApp
               </a>

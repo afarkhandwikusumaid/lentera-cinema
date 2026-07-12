@@ -45,7 +45,7 @@ export default function ServicePage() {
           <p className="text-[#888] max-w-2xl mx-auto text-sm md:text-base leading-relaxed mb-10">
             {staticData.heroDesc}
           </p>
-          <a href="https://wa.me/6285944629716?text=Halo%20Lentera%20Cinema,%20saya%20tertarik%20untuk%20konsultasi%20layanan%20dokumentasi." target="_blank" rel="noreferrer" 
+          <a href="https://wa.me/6285944629716?text=Halo%20Lentera%20Cinema,%20saya%20tertarik%20dengan%20Dokumentasi%20Event.%20Bisa%20info%20lebih%20lanjut?" target="_blank" rel="noreferrer" 
              className="glow-btn px-8 py-3 rounded-full text-sm font-bold tracking-wide inline-flex items-center gap-2">
             Konsultasi Sekarang <ArrowRight size={16} />
           </a>

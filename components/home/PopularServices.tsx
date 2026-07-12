@@ -31,7 +31,7 @@ export default function PopularServices() {
         <div className="flex items-end justify-between mb-10">
           <div className="max-w-xl">
             <h2 className="font-serif font-medium text-white mb-3" style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', letterSpacing: '-0.01em', lineHeight: '1.1' }}>
-              Layanan Populer
+              Layanan
             </h2>
             <p className="text-white/60 text-sm leading-relaxed max-w-md">
               Ubah momen berharga Anda menjadi mahakarya visual dengan layanan eksklusif kami.
@@ -59,7 +59,14 @@ export default function PopularServices() {
             {services.map((card, i) => (
               <div key={card.id}
                 className="relative rounded-[24px] overflow-hidden aspect-[4/3] bg-[#0f0f0f] cursor-pointer group border border-white/5 w-[300px] sm:w-[380px] md:w-[420px] shrink-0 snap-start select-none"
-                onClick={() => window.location.href = `/layanan/${card.slug}`}
+                onClick={() => {
+                  if (hoverApp === i) {
+                    window.location.href = `/layanan/${card.slug}`;
+                  } else {
+                    setHoverApp(i);
+                    videoRefs.current[i]?.play().catch(() => {});
+                  }
+                }}
                 onMouseEnter={() => {
                   setHoverApp(i);
                   videoRefs.current[i]?.play().catch(() => {});
@@ -87,8 +94,8 @@ export default function PopularServices() {
                   <h3 className="text-xl font-bold text-white mb-1.5 tracking-tight leading-none">{card.name}</h3>
                   <p className="text-[13px] text-white/70 leading-relaxed font-normal line-clamp-2">{card.description}</p>
                   
-                  {/* Artlist-style inline button (appears on hover) */}
-                  <div className="mt-0 overflow-hidden transition-all duration-300 max-h-0 opacity-0 group-hover:max-h-[50px] group-hover:opacity-100 group-hover:mt-4">
+                  {/* Artlist-style inline button (appears on hover on desktop, or first tap on mobile) */}
+                  <div className={`overflow-hidden transition-all duration-300 ${hoverApp === i ? 'max-h-[50px] opacity-100 mt-4' : 'max-h-0 opacity-0 mt-0'} group-hover:max-h-[50px] group-hover:opacity-100 group-hover:mt-4`}>
                     <a href={`/layanan/${card.slug}`} className="inline-flex items-center justify-center bg-white text-black font-semibold text-[13px] px-5 py-2.5 rounded-full hover:bg-white/90 transition-colors" onClick={(e) => e.stopPropagation()}>
                       Lihat Detail
                     </a>
