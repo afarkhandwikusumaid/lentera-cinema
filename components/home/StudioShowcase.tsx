@@ -18,7 +18,7 @@ export default function StudioShowcase() {
 
       {/* Go to Toolkit Button */}
       <div className="flex justify-center mb-16">
-        <a href="https://wa.me/6281234567890" target="_blank" rel="noreferrer" 
+        <a href="https://wa.me/6285944629716?text=Halo%20Lentera%20Cinema,%20saya%20tertarik%20untuk%20konsultasi%20layanan%20dokumentasi." target="_blank" rel="noreferrer" 
            className="glow-btn px-8 py-3.5 rounded-full text-[14px] font-bold uppercase tracking-wider transition-all duration-300">
           Mulai Konsultasi
         </a>
