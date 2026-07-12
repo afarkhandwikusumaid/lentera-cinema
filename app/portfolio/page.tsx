@@ -153,7 +153,10 @@ export default function PortfolioPage() {
                               className="w-full h-full object-cover" 
                               onError={(e) => { e.currentTarget.src = '/images/yearbook.png'; }}
                             />
-                            {/* The user mentioned the photo will have its own text/title, so we remove the overlay */}
+                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent p-6 pt-16 transition-transform duration-500">
+                              <span className="text-[10px] font-bold tracking-widest uppercase text-[#e8b84b] block mb-1.5 drop-shadow-lg">{item.service_name}</span>
+                              <h3 className="text-xl md:text-2xl font-bold text-white leading-tight drop-shadow-lg">{item.title}</h3>
+                            </div>
                           </div>
                         </div>
                       );
@@ -252,10 +255,13 @@ export default function PortfolioPage() {
             <img 
               src={modalImage.media_url} 
               alt={modalImage.title} 
-              className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl" 
+              className="max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl bg-[#0a0a0a]" 
               onError={(e) => { e.currentTarget.src = '/images/yearbook.png'; }}
             />
-            {/* Text overlay removed as requested */}
+            <div className="mt-6 text-center animate-in slide-in-from-bottom-4 duration-500">
+              <h3 className="text-2xl md:text-3xl font-bold text-white drop-shadow-md">{modalImage.title}</h3>
+              <p className="text-[#e8b84b] text-sm md:text-base font-bold uppercase tracking-[0.2em] mt-2 drop-shadow-md">{modalImage.service_name}</p>
+            </div>
           </div>
         </div>
       )}

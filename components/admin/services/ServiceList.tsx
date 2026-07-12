@@ -1,4 +1,4 @@
-import { Plus, Settings, Edit2, Trash2 } from 'lucide-react';
+import { Plus, Settings, Edit2, Trash2, Image as ImageIcon } from 'lucide-react';
 import { Service } from '@/lib/db';
 
 export default function ServiceList({
@@ -32,6 +32,7 @@ export default function ServiceList({
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-200 text-gray-500 text-sm">
+              <th className="p-4 font-medium w-16">Foto</th>
               <th className="p-4 font-medium">Layanan</th>
               <th className="p-4 font-medium">Subtitle</th>
               <th className="p-4 font-medium">Status</th>
@@ -42,6 +43,15 @@ export default function ServiceList({
             {services.map(service => (
               <tr key={service.id} className="border-b border-gray-100">
                 <td className="p-4">
+                  {service.image_url ? (
+                    <img src={service.image_url} alt={service.name} className="w-12 h-12 rounded-lg object-cover border border-gray-200" />
+                  ) : (
+                    <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400 border border-gray-200">
+                      <ImageIcon size={16} />
+                    </div>
+                  )}
+                </td>
+                <td className="p-4">
                   <div className="font-bold text-gray-900">{service.name}</div>
                   <div className="text-sm text-gray-500 mt-1">/{service.slug}</div>
                 </td>
@@ -51,9 +61,14 @@ export default function ServiceList({
                 </td>
                 <td className="p-4">
                   <div className="flex justify-end gap-2">
-                    <button onClick={() => startManageBenefits(service)} className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-white bg-black rounded-lg transition-colors hover:bg-gray-800"><Settings size={14} /> Kelola Benefit</button>
-                    <button onClick={() => startEditService(service)} className="p-2 text-gray-400 bg-white border rounded-lg transition-colors"><Edit2 size={14} /></button>
-                    <button onClick={() => handleDeleteService(service.id)} className="p-2 text-gray-400 bg-white border rounded-lg transition-colors"><Trash2 size={14} /></button>
+                    <a href="/adminlentera/portfolio" className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-white bg-[#c29631] rounded-lg transition-colors hover:bg-[#a57f29]">
+                      <ImageIcon size={14} /> Kelola Galeri
+                    </a>
+                    <button onClick={() => startManageBenefits(service)} className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-white bg-black rounded-lg transition-colors hover:bg-gray-800">
+                      <Settings size={14} /> Benefit
+                    </button>
+                    <button onClick={() => startEditService(service)} className="p-2 text-gray-500 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"><Edit2 size={14} /></button>
+                    <button onClick={() => handleDeleteService(service.id)} className="p-2 text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"><Trash2 size={14} /></button>
                   </div>
                 </td>
               </tr>

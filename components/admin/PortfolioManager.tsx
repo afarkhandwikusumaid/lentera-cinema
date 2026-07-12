@@ -71,48 +71,88 @@ export default function PortfolioManager({ mediaType }: { mediaType: 'image' | '
   if (isEditing) {
     return (
       <AdminLayout>
-      <div className="space-y-6">
-      <div className="bg-white p-6 rounded-2xl border border-gray-200">
-        <h2 className="text-xl font-bold text-gray-900 mb-6">{formData.id ? 'Edit Portofolio' : 'Tambah Portofolio'}</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm mb-8">
+        <h2 className="text-xl font-bold mb-6 text-gray-900">{formData.id ? 'Edit Portofolio' : 'Tambah Portofolio'}</h2>
+        
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="grid grid-cols-2 gap-5">
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-1.5">Judul Karya</label>
+              <input required type="text" className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#c29631]/50 focus:border-[#c29631] outline-none text-gray-900 transition-all text-sm" 
+                     placeholder="Misal: Wedding of Dian & Rian"
+                     value={formData.title || ''} onChange={e => setFormData({...formData, title: e.target.value})} />
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-1.5">Kategori Layanan</label>
+              <select className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#c29631]/50 focus:border-[#c29631] outline-none text-gray-900 transition-all text-sm"
+                      value={formData.service_id || ''} onChange={e => setFormData({...formData, service_id: e.target.value})}>
+                <option value="">-- Pilih Layanan --</option>
+                {services.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+              </select>
+            </div>
+          </div>
+
+          <div className="bg-[#c29631]/5 border border-[#c29631]/20 rounded-xl p-4 flex items-center justify-center gap-2 text-[#c29631] mb-2">
+            {mediaType === 'image' ? (
+              <><ImageIcon size={18} /> <span className="text-sm font-bold uppercase tracking-wider">Format: Gambar / Foto</span></>
+            ) : (
+              <><Video size={18} /> <span className="text-sm font-bold uppercase tracking-wider">Format: Video / IG Reels</span></>
+            )}
+          </div>
+
           <div>
-            <label className="block text-xs font-bold text-gray-500 mb-1">Judul</label>
-            <input required type="text" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm" 
-                   value={formData.title || ''} onChange={e => setFormData({...formData, title: e.target.value})} />
+            <label className="block text-sm font-bold text-gray-700 mb-1.5">
+              {mediaType === 'video' ? 'Tautan Video (Instagram / YouTube)' : 'Unggah Foto dari Perangkat'}
+            </label>
+            
+            {mediaType === 'video' ? (
+              <div>
+                <input required type="url" className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#c29631]/50 focus:border-[#c29631] outline-none text-gray-900 transition-all text-sm" 
+                       placeholder="https://www.instagram.com/reel/..."
+                       value={formData.media_url || ''} onChange={e => setFormData({...formData, media_url: e.target.value})} />
+                <p className="text-xs text-gray-500 mt-2">Tempelkan link langsung menuju video IG Reels atau YouTube.</p>
+              </div>
+            ) : (
+              <div>
+                <div className="flex gap-2">
+                  <input type="text" readOnly className="flex-1 p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none text-gray-500 text-sm" 
+                         placeholder="URL gambar akan muncul di sini" value={formData.media_url || ''} />
+                  <label className="bg-gray-900 text-white px-5 py-3 rounded-xl text-sm font-bold cursor-pointer hover:bg-gray-800 transition-colors whitespace-nowrap shadow-sm flex items-center justify-center">
+                    Pilih Foto
+                    <input type="file" accept="image/*" className="hidden" 
+                           onChange={async (e) => {
+                             const file = e.target.files?.[0];
+                             if (!file) return;
+                             if (file.size > 2 * 1024 * 1024) { alert('Ukuran foto maksimal 2MB'); return; }
+                             const fd = new FormData();
+                             fd.append('file', file); fd.append('bucket', 'uploads'); fd.append('folder', 'portfolio');
+                             try {
+                               const res = await fetch('/api/upload', { method: 'POST', body: fd });
+                               const data = await res.json();
+                               if (data.success) setFormData({...formData, media_url: data.url});
+                               else alert(data.message || 'Gagal mengunggah foto');
+                             } catch (err) { alert('Terjadi kesalahan saat mengunggah foto'); }
+                           }} />
+                  </label>
+                </div>
+                {formData.media_url && (
+                  <img src={formData.media_url} alt="Preview" className="mt-3 h-24 w-auto rounded-lg object-cover border border-gray-200 shadow-sm" />
+                )}
+              </div>
+            )}
           </div>
-          <div>
-            <label className="block text-xs font-bold text-gray-500 mb-1">Layanan</label>
-            <select className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm"
-                    value={formData.service_id || ''} onChange={e => setFormData({...formData, service_id: e.target.value})}>
-              <option value="">Pilih Layanan</option>
-              {services.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-            </select>
+
+          <div className="flex items-center gap-3 bg-gray-50 p-4 rounded-xl border border-gray-100">
+            <input type="checkbox" id="featured" className="w-4 h-4 text-[#c29631] focus:ring-[#c29631] border-gray-300 rounded cursor-pointer"
+                   checked={formData.is_featured || false} onChange={e => setFormData({...formData, is_featured: e.target.checked})} />
+            <label htmlFor="featured" className="text-sm font-bold text-gray-700 cursor-pointer">Tandai sebagai Karya Pilihan (Tampil di Halaman Utama)</label>
           </div>
-          <div>
-            <label className="block text-xs font-bold text-gray-500 mb-1">Tipe Media</label>
-            <select className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm"
-                    value={formData.media_type || 'image'} onChange={e => setFormData({...formData, media_type: e.target.value as 'image'|'video'})}>
-              <option value="image">Gambar (Foto)</option>
-              <option value="video">Video</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-xs font-bold text-gray-500 mb-1">URL Media</label>
-            <input required type="text" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm" 
-                   value={formData.media_url || ''} onChange={e => setFormData({...formData, media_url: e.target.value})} />
-            <p className="text-xs text-gray-400 mt-1">Gunakan URL foto (Unsplash/Imgur) atau video (Supabase Storage/YouTube embed).</p>
-          </div>
-          <div className="flex items-center gap-2 mt-2">
-            <input type="checkbox" id="featured" checked={formData.is_featured || false} 
-                   onChange={e => setFormData({...formData, is_featured: e.target.checked})} />
-            <label htmlFor="featured" className="text-sm font-medium text-gray-700">Tampilkan di Beranda (Featured)</label>
-          </div>
-          <div className="flex gap-3 pt-4">
-            <button type="submit" className="bg-[#c29631] text-white px-4 py-2 rounded-lg text-sm font-bold">Simpan</button>
-            <button type="button" onClick={() => setIsEditing(false)} className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-bold">Batal</button>
+          
+          <div className="flex gap-3 pt-4 border-t border-gray-100 mt-4">
+            <button type="submit" className="bg-[#c29631] hover:bg-[#a57f29] text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-sm">Simpan Portofolio</button>
+            <button type="button" onClick={() => setIsEditing(false)} className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-2.5 rounded-xl font-bold transition-all">Batal</button>
           </div>
         </form>
-      </div>
       </div>
       </AdminLayout>
     );
