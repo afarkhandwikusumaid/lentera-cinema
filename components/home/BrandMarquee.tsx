@@ -1,44 +1,23 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { getBrands, Brand } from '@/lib/db';
-
-const KitbLogo = () => (
-  <svg width="120" height="40" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-[30px] md:h-9 mix-blend-screen w-auto object-contain flex-shrink-0">
-    <rect x="0" y="5" width="30" height="30" rx="4" fill="currentColor"/>
-    <path d="M8 12L15 28L22 12" stroke="black" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-    <text x="38" y="27" fill="currentColor" fontSize="22" fontWeight="900" fontFamily="sans-serif" letterSpacing="1">KITB</text>
-  </svg>
-);
-
-const STATIC_LOGOS = [
-  { name: 'Pertamina', src: '/brands/pertamina.png' },
-  { name: 'KAI', src: '/brands/kai.svg' },
-  { name: 'Bank Mandiri', src: '/brands/mandiri.svg' },
-  { name: 'Telkomsel', src: '/brands/telkomsel.svg' },
-  { name: 'BCA', src: '/brands/bca.svg' },
-  { name: 'AQUA', src: '/brands/aqua.svg' },
-  { name: 'WIKA', src: '/brands/wika.svg' },
-  { name: 'Gojek', src: '/brands/gojek.svg' },
-  { name: 'Tokopedia', src: '/brands/tokopedia.svg' },
-  { name: 'KITB', isComponent: true },
-];
+import { getBrands } from '@/lib/db';
 
 export default function BrandMarquee() {
-  const [brands, setBrands] = useState<{name: string, src?: string, isComponent?: boolean}[]>(STATIC_LOGOS);
+  const [brands, setBrands] = useState<{name: string, src: string}[]>([]);
 
   useEffect(() => {
     async function loadBrands() {
       const dbBrands = await getBrands();
       const activeBrands = dbBrands.filter(b => b.is_active);
-      if (activeBrands.length > 0) {
-        setBrands(activeBrands.map(b => ({
-          name: b.name,
-          src: b.logo_url
-        })));
-      }
+      setBrands(activeBrands.map(b => ({
+        name: b.name,
+        src: b.logo_url
+      })));
     }
     loadBrands();
   }, []);
+
+  if (brands.length === 0) return null;
 
   return (
     <section className="bg-black border-y border-[#2a2a2a] py-8 overflow-hidden relative flex flex-col items-center">
@@ -52,20 +31,16 @@ export default function BrandMarquee() {
           {/* Using 2 loops for continuous 50% translation effect */}
           {[...brands, ...brands].map((brand, i) => (
             <div key={i} className="flex items-center justify-center opacity-40 hover:opacity-100 transition-all duration-300 filter grayscale hover:grayscale-0 brightness-0 invert hover:brightness-100 hover:invert-0 cursor-pointer">
-              {brand.isComponent ? (
-                <div className="text-white hover:text-[#0056A4]"><KitbLogo /></div>
-              ) : (
-                <img 
-                  src={brand.src as string} 
-                  alt={brand.name} 
-                  loading="lazy"
-                  decoding="async"
-                  width={100} 
-                  height={50} 
-                  className="h-[30px] md:h-9 mix-blend-screen w-auto object-contain flex-shrink-0"
-                  style={{ color: 'transparent' }} 
-                />
-              )}
+              <img 
+                src={brand.src} 
+                alt={brand.name} 
+                loading="lazy"
+                decoding="async"
+                width={100} 
+                height={50} 
+                className="h-[30px] md:h-9 mix-blend-screen w-auto object-contain flex-shrink-0"
+                style={{ color: 'transparent' }} 
+              />
             </div>
           ))}
         </div>

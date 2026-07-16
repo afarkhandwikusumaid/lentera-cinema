@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { getProjects, getPayments, getExpenses, savePayment, saveExpense, deletePayment, deleteExpense, Project, ProjectPayment, Expense } from '@/lib/db';
 import AdminLayout from '@/components/AdminLayout';
 import { useParams } from 'next/navigation';
@@ -24,11 +24,7 @@ export default function ProjectDetailAdmin() {
   const [isEditingExpense, setIsEditingExpense] = useState(false);
   const [expenseForm, setExpenseForm] = useState<Partial<Expense>>({});
 
-  useEffect(() => {
-    fetchData();
-  }, [projectId]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     const projData = await getProjects();
     const proj = projData.find(p => p.id === projectId) || null;
     setProject(proj);
@@ -40,7 +36,11 @@ export default function ProjectDetailAdmin() {
     setExpenses(expData.filter(e => e.project_id === projectId));
 
     setLoading(false);
-  };
+  }, [projectId]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(amount);

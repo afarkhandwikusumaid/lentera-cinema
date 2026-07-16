@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { getPortfolio, savePortfolioItem, deletePortfolioItem, PortfolioItem, getServices, Service } from '@/lib/db';
-import { Plus, Edit2, Trash2, Image as ImageIcon, Video, Filter } from 'lucide-react';
+import { Plus, Edit2, Trash2, Image as ImageIcon, Video } from 'lucide-react';
 import AdminLayout from '@/components/AdminLayout';
+import { useModal } from '@/components/admin/ModalContext';
 
 export default function PortfolioManager({ mediaType }: { mediaType: 'image' | 'video' }) {
+  const { showAlert, showConfirm } = useModal();
   const [items, setItems] = useState<PortfolioItem[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
@@ -13,10 +15,6 @@ export default function PortfolioManager({ mediaType }: { mediaType: 'image' | '
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<Partial<PortfolioItem>>({});
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const fetchData = async () => {
     const data = await getPortfolio();
@@ -26,13 +24,18 @@ export default function PortfolioManager({ mediaType }: { mediaType: 'image' | '
     setLoading(false);
   };
 
+  useEffect(() => {
+    fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleEdit = (item: PortfolioItem) => {
     setFormData(item);
     setIsEditing(true);
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('Yakin ingin menghapus portofolio ini?')) {
+    if (await showConfirm('Yakin ingin menghapus portofolio ini?')) {
       const updated = await deletePortfolioItem(id);
       setItems(updated);
     }
@@ -123,15 +126,15 @@ export default function PortfolioManager({ mediaType }: { mediaType: 'image' | '
                            onChange={async (e) => {
                              const file = e.target.files?.[0];
                              if (!file) return;
-                             if (file.size > 2 * 1024 * 1024) { alert('Ukuran foto maksimal 2MB'); return; }
+                             if (file.size > 2 * 1024 * 1024) { await showAlert('Ukuran foto maksimal 2MB'); return; }
                              const fd = new FormData();
                              fd.append('file', file); fd.append('bucket', 'uploads'); fd.append('folder', 'portfolio');
                              try {
                                const res = await fetch('/api/upload', { method: 'POST', body: fd });
                                const data = await res.json();
                                if (data.success) setFormData({...formData, media_url: data.url});
-                               else alert(data.message || 'Gagal mengunggah foto');
-                             } catch (err) { alert('Terjadi kesalahan saat mengunggah foto'); }
+                               else await showAlert(data.message || 'Gagal mengunggah foto');
+                             } catch { await showAlert('Terjadi kesalahan saat mengunggah foto'); }
                            }} />
                   </label>
                 </div>

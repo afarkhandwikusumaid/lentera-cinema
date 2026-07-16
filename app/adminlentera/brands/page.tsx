@@ -4,24 +4,27 @@ import { useState, useEffect } from 'react';
 import { getBrands, saveBrand, deleteBrand, Brand } from '@/lib/db';
 import { Plus, Edit2, Trash2, Check, X } from 'lucide-react';
 import AdminLayout from '@/components/AdminLayout';
+import { useModal } from '@/components/admin/ModalContext';
 
 export default function BrandsAdmin() {
+  const { showAlert, showConfirm } = useModal();
   const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<Partial<Brand>>({});
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const fetchData = async () => {
     const data = await getBrands();
     setBrands(data);
     setLoading(false);
   };
+
+  useEffect(() => {
+    fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
 
   const handleEdit = (brand: Brand) => {
     setFormData(brand);
@@ -30,7 +33,7 @@ export default function BrandsAdmin() {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('Yakin ingin menghapus brand ini?')) {
+    if (await showConfirm('Yakin ingin menghapus brand ini?')) {
       const updated = await deleteBrand(id);
       setBrands(updated);
     }
@@ -55,7 +58,7 @@ export default function BrandsAdmin() {
         const resData = await res.json();
         
         if (!res.ok) {
-          alert(resData.message || 'Gagal mengunggah logo');
+          await showAlert(resData.message || 'Gagal mengunggah logo');
           setUploading(false);
           return;
         }
@@ -63,7 +66,7 @@ export default function BrandsAdmin() {
         logoUrl = resData.url;
       } catch (err) {
         console.error('Upload error', err);
-        alert('Terjadi kesalahan saat mengunggah file.');
+        await showAlert('Terjadi kesalahan saat mengunggah file.');
         setUploading(false);
         return;
       }

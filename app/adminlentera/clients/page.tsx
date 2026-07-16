@@ -4,22 +4,25 @@ import { useState, useEffect } from 'react';
 import { getSchoolClients, saveSchoolClient, deleteSchoolClient, SchoolClient } from '@/lib/db';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 import AdminLayout from '@/components/AdminLayout';
+import { useModal } from '@/components/admin/ModalContext';
 
 export default function ClientsAdmin() {
+  const { showAlert, showConfirm } = useModal();
   const [clients, setClients] = useState<SchoolClient[]>([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<Partial<SchoolClient>>({});
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const fetchData = async () => {
     const data = await getSchoolClients();
     setClients(data);
     setLoading(false);
   };
+
+  useEffect(() => {
+    fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
 
   const handleEdit = (client: SchoolClient) => {
     setFormData(client);
@@ -27,7 +30,7 @@ export default function ClientsAdmin() {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('Yakin ingin menghapus klien ini?')) {
+    if (await showConfirm('Yakin ingin menghapus klien ini?')) {
       const updated = await deleteSchoolClient(id);
       setClients(updated);
     }

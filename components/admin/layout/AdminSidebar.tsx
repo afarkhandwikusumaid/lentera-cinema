@@ -1,12 +1,12 @@
 import Link from 'next/link';
-import { Flame, User, LogOut } from 'lucide-react';
+import { Flame, User, LogOut, type LucideIcon } from 'lucide-react';
 
 interface NavGroup {
   title: string;
   links: Array<{
     name: string;
     href?: string;
-    icon: any;
+    icon: LucideIcon;
     subLinks?: Array<{ name: string; href: string; }>;
   }>;
 }

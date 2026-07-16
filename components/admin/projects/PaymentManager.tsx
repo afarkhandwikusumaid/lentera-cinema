@@ -1,5 +1,6 @@
 import { ProjectPayment, deletePayment } from '@/lib/db';
 import { CheckCircle2, Clock, Edit2, Trash2 } from 'lucide-react';
+import { useModal } from '@/components/admin/ModalContext';
 
 export default function PaymentManager({
   payments,
@@ -20,6 +21,8 @@ export default function PaymentManager({
   fetchData: () => void;
   formatCurrency: (amount: number) => string;
 }) {
+  const { showConfirm } = useModal();
+
   return (
     <div className="space-y-4">
       {isEditingPayment ? (
@@ -40,7 +43,7 @@ export default function PaymentManager({
             </div>
             <div>
               <label className="block text-xs font-bold text-gray-500 mb-1">Status</label>
-              <select className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm" value={paymentForm.status || 'unpaid'} onChange={e => setPaymentForm({...paymentForm, status: e.target.value as any})}>
+              <select className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm" value={paymentForm.status || 'unpaid'} onChange={e => setPaymentForm({...paymentForm, status: e.target.value as ProjectPayment['status']})}>
                 <option value="unpaid">Belum Dibayar</option>
                 <option value="paid">Lunas</option>
               </select>
@@ -89,7 +92,7 @@ export default function PaymentManager({
                   </td>
                   <td className="p-4 text-right">
                     <button onClick={() => { setPaymentForm(pay); setIsEditingPayment(true); }} className="p-2 text-gray-400 hover:text-[#c29631]"><Edit2 size={14}/></button>
-                    <button onClick={async () => { if(confirm('Hapus termin ini?')) { await deletePayment(pay.id); fetchData(); } }} className="p-2 text-gray-400 hover:text-red-500"><Trash2 size={14}/></button>
+                    <button onClick={async () => { if(await showConfirm('Hapus termin ini?')) { await deletePayment(pay.id); fetchData(); } }} className="p-2 text-gray-400 hover:text-red-500"><Trash2 size={14}/></button>
                   </td>
                 </tr>
               ))}

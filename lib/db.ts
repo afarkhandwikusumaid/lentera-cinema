@@ -1,8 +1,12 @@
 // lib/db.ts
-// Dual Engine Database: Communicates with Supabase if credentials exist, otherwise falls back to LocalStorage.
+// Dual Engine Database: Supabase first, LocalStorage fallback.
 // Safe for both SSR and CSR in Next.js.
 
 import { supabase, isSupabaseConfigured } from './supabase';
+
+// ─────────────────────────────────────────────────────────────
+// INTERFACES
+// ─────────────────────────────────────────────────────────────
 
 export interface Service {
   id: string;
@@ -67,6 +71,21 @@ export interface Testimonial {
   is_featured: boolean;
 }
 
+export interface Brand {
+  id: string;
+  name: string;
+  logo_url: string;
+  is_active: boolean;
+  order: number;
+}
+
+export interface SchoolClient {
+  id: string;
+  name: string;
+  year: string;
+  order: number;
+}
+
 export interface Project {
   id: string;
   name: string;
@@ -99,37 +118,19 @@ export interface Expense {
   created_at: string;
 }
 
+// ─────────────────────────────────────────────────────────────
+// UTILITY
+// ─────────────────────────────────────────────────────────────
 
-// Instagram parser utility
 export function parseInstagramEmbedUrl(url: string): string | null {
   if (!url) return null;
   const trimmed = url.trim();
-  
-  // Match Instagram reel or post links
   const match = trimmed.match(/instagram\.com\/(?:reel|p)\/([a-zA-Z0-9_-]+)/i);
   if (match && match[1]) {
     return `https://www.instagram.com/p/${match[1]}/embed/`;
   }
   return null;
 }
-
-// ─────────────────────────────────────────────────────────────
-// DEFAULT SEED DATA
-// ─────────────────────────────────────────────────────────────
-
-const DEFAULT_SETTINGS: SiteSettings = {
-  hero_title: 'Timeless Wedding & Cinematic Event',
-  hero_subtitle: 'Merekam emosi, mengabadikan momen. Lentera Cinema adalah partner visual Anda untuk menciptakan mahakarya dari setiap detik berharga.',
-  hero_video_url: 'https://assets.mixkit.co/videos/preview/mixkit-romantic-couple-enjoying-a-romantic-date-in-a-canyon-41584-large.mp4'
-};
-
-const DEFAULT_SERVICES: Service[] = [
-  { id: 'srv-yb', name: 'Yearbook Premium', slug: 'yearbook', subtitle: 'Buku Tahunan Eksklusif', description: 'Dokumentasi masa sekolah paling berkesan dengan konsep kreatif, estetik, dan sinematik. Lengkap dengan material cetak eksklusif dan drone b-roll.', video_url: 'https://assets.mixkit.co/videos/preview/mixkit-group-of-friends-having-fun-at-graduation-43407-large.mp4', image_url: '/images/yearbook.png', is_active: true },
-  { id: 'srv-ws', name: 'Dokumentasi Wisuda', slug: 'wisuda', subtitle: 'Foto & Video Wisuda', description: 'Abadikan momen kelulusan Anda dengan sesi foto studio/outdoor dan dokumentasi video sinematik beresolusi tinggi.', video_url: 'https://assets.mixkit.co/videos/preview/mixkit-excited-students-throwing-caps-in-the-air-43405-large.mp4', image_url: '/images/graduation.png', is_active: true },
-  { id: 'srv-wd', name: 'Wedding Organizer & Documentation', slug: 'wedding', subtitle: 'Liputan Pernikahan Mewah', description: 'Abadikan momen sakral sekali seumur hidup dengan liputan video bergaya film bioskop yang menangkap setiap emosi.', video_url: 'https://assets.mixkit.co/videos/preview/mixkit-romantic-couple-enjoying-a-romantic-date-in-a-canyon-41584-large.mp4', image_url: '/images/wedding.png', is_active: true },
-  { id: 'srv-ev', name: 'Dokumentasi Event', slug: 'foto-event', subtitle: 'Event Coverage', description: 'Liputan dokumentasi acara formal maupun non-formal (konser, seminar, ulang tahun) dengan konsep visual estetik.', video_url: 'https://assets.mixkit.co/videos/preview/mixkit-young-woman-holding-a-sparkler-at-night-42171-large.mp4', image_url: '/images/video_wisuda.png', is_active: true },
-  { id: 'srv-km', name: 'Komersil & Produk', slug: 'dokumentasi-product', subtitle: 'Commercial & Corporate', description: 'Produksi video company profile, iklan komersial, dan foto produk berkualitas tinggi untuk meningkatkan citra brand Anda.', image_url: '/images/yearbook.png', is_active: true },
-];
 
 const getStorageItem = (key: string): string | null => {
   if (typeof window === 'undefined') return null;
@@ -142,423 +143,309 @@ const setStorageItem = (key: string, value: string) => {
   }
 };
 
-// Safe DB LocalStorage seed initializer
+// Default settings (editable via admin)
+const DEFAULT_SETTINGS: SiteSettings = {
+  hero_title: '',
+  hero_subtitle: '',
+  hero_video_url: ''
+};
+
+// Safe DB LocalStorage seed initializer — all data starts EMPTY
 export function initDB() {
   if (typeof window === 'undefined') return;
-
-  if (!getStorageItem('lc_services')) {
-    setStorageItem('lc_services', JSON.stringify(DEFAULT_SERVICES));
-  }
-  if (!getStorageItem('lc_service_benefits')) {
-    setStorageItem('lc_service_benefits', JSON.stringify([]));
-  }
-  if (!getStorageItem('lc_portfolio')) {
-    setStorageItem('lc_portfolio', JSON.stringify([]));
-  }
-  if (!getStorageItem('lc_testimonials')) {
-    setStorageItem('lc_testimonials', JSON.stringify([]));
-  }
-  if (!getStorageItem('lc_bookings')) {
-    setStorageItem('lc_bookings', JSON.stringify([]));
-  }
-  if (!getStorageItem('lc_settings')) {
-    setStorageItem('lc_settings', JSON.stringify(DEFAULT_SETTINGS));
-  }
-  if (!getStorageItem('lc_projects')) {
-    setStorageItem('lc_projects', JSON.stringify([]));
-  }
-  if (!getStorageItem('lc_payments')) {
-    setStorageItem('lc_payments', JSON.stringify([]));
-  }
-  if (!getStorageItem('lc_expenses')) {
-    setStorageItem('lc_expenses', JSON.stringify([]));
+  const keys = [
+    'lc_services', 'lc_service_benefits', 'lc_portfolio',
+    'lc_testimonials', 'lc_bookings', 'lc_settings',
+    'lc_projects', 'lc_payments', 'lc_expenses',
+    'lc_brands', 'lc_school_clients'
+  ];
+  for (const key of keys) {
+    if (!getStorageItem(key)) {
+      setStorageItem(key, JSON.stringify(key === 'lc_settings' ? DEFAULT_SETTINGS : []));
+    }
   }
 }
 
-// ---------------------------------------------------------
-// SETTINGS METHODS
-// ---------------------------------------------------------
-export async function getSettings(): Promise<SiteSettings> {
+// ─────────────────────────────────────────────────────────────
+// GENERIC CRUD HELPERS (Supabase-first, LocalStorage fallback)
+// ─────────────────────────────────────────────────────────────
+
+async function sbGet<T>(table: string, lsKey: string, orderCol?: string): Promise<T[]> {
+  if (isSupabaseConfigured() && supabase) {
+    try {
+      let query = supabase.from(table).select('*');
+      if (orderCol) query = query.order(orderCol, { ascending: true });
+      const { data, error } = await query;
+      if (!error && data && data.length > 0) return data as T[];
+    } catch { /* fallback */ }
+  }
   initDB();
-  const data = getStorageItem('lc_settings');
-  return data ? JSON.parse(data) : DEFAULT_SETTINGS;
+  const raw = getStorageItem(lsKey);
+  return raw ? JSON.parse(raw) : [];
+}
+
+async function sbUpsert<T extends { id: string }>(
+  table: string, lsKey: string, item: T, orderCol?: string
+): Promise<T[]> {
+  if (isSupabaseConfigured() && supabase) {
+    try {
+      const { error } = await supabase.from(table).upsert(item);
+      if (!error) {
+        // Re-fetch from Supabase to stay in sync
+        let query = supabase.from(table).select('*');
+        if (orderCol) query = query.order(orderCol, { ascending: true });
+        const { data } = await query;
+        if (data) return data as T[];
+      }
+    } catch { /* fallback */ }
+  }
+  // LocalStorage fallback
+  initDB();
+  const raw = getStorageItem(lsKey);
+  const items: T[] = raw ? JSON.parse(raw) : [];
+  const idx = items.findIndex(i => i.id === item.id);
+  if (idx >= 0) items[idx] = item; else items.push(item);
+  setStorageItem(lsKey, JSON.stringify(items));
+  return items;
+}
+
+async function sbDelete<T extends { id: string }>(
+  table: string, lsKey: string, id: string, orderCol?: string
+): Promise<T[]> {
+  if (isSupabaseConfigured() && supabase) {
+    try {
+      const { error } = await supabase.from(table).delete().eq('id', id);
+      if (!error) {
+        let query = supabase.from(table).select('*');
+        if (orderCol) query = query.order(orderCol, { ascending: true });
+        const { data } = await query;
+        if (data) return data as T[];
+      }
+    } catch { /* fallback */ }
+  }
+  initDB();
+  const raw = getStorageItem(lsKey);
+  const items: T[] = raw ? JSON.parse(raw) : [];
+  const filtered = items.filter(i => i.id !== id);
+  setStorageItem(lsKey, JSON.stringify(filtered));
+  return filtered;
+}
+
+// ─────────────────────────────────────────────────────────────
+// SETTINGS METHODS
+// ─────────────────────────────────────────────────────────────
+
+export async function getSettings(): Promise<SiteSettings> {
+  if (isSupabaseConfigured() && supabase) {
+    try {
+      const { data, error } = await supabase.from('site_settings').select('*').limit(1).single();
+      if (!error && data) return data as SiteSettings;
+    } catch { /* fallback */ }
+  }
+  initDB();
+  const raw = getStorageItem('lc_settings');
+  return raw ? JSON.parse(raw) : DEFAULT_SETTINGS;
 }
 
 export async function saveSettings(settings: SiteSettings): Promise<SiteSettings> {
+  if (isSupabaseConfigured() && supabase) {
+    try {
+      const { error } = await supabase.from('site_settings').upsert({ id: 'main', ...settings });
+      if (!error) return settings;
+    } catch { /* fallback */ }
+  }
   setStorageItem('lc_settings', JSON.stringify(settings));
   return settings;
 }
 
-// ---------------------------------------------------------
+// ─────────────────────────────────────────────────────────────
 // SERVICES METHODS
-// ---------------------------------------------------------
+// ─────────────────────────────────────────────────────────────
+
 export async function getServices(): Promise<Service[]> {
-  let result: Service[] = [];
-  if (isSupabaseConfigured() && supabase) {
-    const { data, error } = await supabase.from('services').select('*');
-    if (!error && data) result = data as Service[];
-  }
-  
-  if (result.length === 0) {
-    initDB();
-    const data = getStorageItem('lc_services');
-    result = data ? JSON.parse(data) : DEFAULT_SERVICES;
-  }
-
-  // Sort by requested order: Yearbook, Wisuda, Wedding, Event, Komersil
-  const getOrderIndex = (name: string, slug: string) => {
-    const str = (name + ' ' + slug).toLowerCase();
-    if (str.includes('yearbook')) return 1;
-    if (str.includes('wisuda') || str.includes('graduation')) return 2;
-    if (str.includes('wedding')) return 3;
-    if (str.includes('event')) return 4;
-    if (str.includes('komersil') || str.includes('product') || str.includes('komersial')) return 5;
-    return 99;
-  };
-
-  result.sort((a, b) => getOrderIndex(a.name, a.slug) - getOrderIndex(b.name, b.slug));
-  return result;
+  const result = await sbGet<Service>('services', 'lc_services');
+  return result.filter(s => s.is_active !== false);
 }
 
 export async function saveService(service: Service): Promise<Service[]> {
-  if (isSupabaseConfigured() && supabase) {
-    const { error } = await supabase.from('services').upsert(service);
-    if (!error) return getServices();
-  }
-  const services = await getServices();
-  const index = services.findIndex(s => s.id === service.id);
-  if (index >= 0) services[index] = service;
-  else services.push(service);
-  setStorageItem('lc_services', JSON.stringify(services));
-  return services;
+  return sbUpsert<Service>('services', 'lc_services', service);
 }
 
 export async function deleteService(id: string): Promise<Service[]> {
-  if (isSupabaseConfigured() && supabase) {
-    const { error } = await supabase.from('services').delete().eq('id', id);
-    if (!error) return getServices();
-  }
-  const services = (await getServices()).filter(s => s.id !== id);
-  setStorageItem('lc_services', JSON.stringify(services));
-  return services;
+  return sbDelete<Service>('services', 'lc_services', id);
 }
 
-// ---------------------------------------------------------
+// ─────────────────────────────────────────────────────────────
 // SERVICE BENEFITS METHODS
-// ---------------------------------------------------------
+// ─────────────────────────────────────────────────────────────
+
 export async function getServiceBenefits(): Promise<ServiceBenefit[]> {
-  if (isSupabaseConfigured() && supabase) {
-    const { data, error } = await supabase.from('service_benefits').select('*').order('order', { ascending: true });
-    if (!error && data) return data as ServiceBenefit[];
-  }
-  initDB();
-  const data = getStorageItem('lc_service_benefits');
-  return data ? JSON.parse(data) : [];
+  return sbGet<ServiceBenefit>('service_benefits', 'lc_service_benefits', 'order');
 }
 
 export async function saveServiceBenefit(benefit: ServiceBenefit): Promise<ServiceBenefit[]> {
-  if (isSupabaseConfigured() && supabase) {
-    const { error } = await supabase.from('service_benefits').upsert(benefit);
-    if (!error) return getServiceBenefits();
-  }
-  const benefits = await getServiceBenefits();
-  const index = benefits.findIndex(p => p.id === benefit.id);
-  if (index >= 0) benefits[index] = benefit;
-  else benefits.push(benefit);
-  setStorageItem('lc_service_benefits', JSON.stringify(benefits));
-  return benefits;
+  return sbUpsert<ServiceBenefit>('service_benefits', 'lc_service_benefits', benefit, 'order');
 }
 
 export async function deleteServiceBenefit(id: string): Promise<ServiceBenefit[]> {
-  if (isSupabaseConfigured() && supabase) {
-    const { error } = await supabase.from('service_benefits').delete().eq('id', id);
-    if (!error) return getServiceBenefits();
-  }
-  const benefits = (await getServiceBenefits()).filter(p => p.id !== id);
-  setStorageItem('lc_service_benefits', JSON.stringify(benefits));
-  return benefits;
+  return sbDelete<ServiceBenefit>('service_benefits', 'lc_service_benefits', id, 'order');
 }
 
-// ---------------------------------------------------------
+// ─────────────────────────────────────────────────────────────
 // BOOKINGS METHODS
-// ---------------------------------------------------------
+// ─────────────────────────────────────────────────────────────
+
 export async function getBookings(): Promise<Booking[]> {
-  if (isSupabaseConfigured() && supabase) {
-    const { data, error } = await supabase.from('bookings').select('*');
-    if (!error && data) return data as Booking[];
-  }
-  initDB();
-  const data = getStorageItem('lc_bookings');
-  return data ? JSON.parse(data) : [];
+  return sbGet<Booking>('bookings', 'lc_bookings');
 }
 
 export async function saveBooking(booking: Booking): Promise<Booking[]> {
-  if (isSupabaseConfigured() && supabase) {
-    const dataToSave = { ...booking, updated_at: new Date().toISOString() };
-    const { error } = await supabase.from('bookings').upsert(dataToSave);
-    if (!error) return getBookings();
-  }
-  const bookings = await getBookings();
-  const index = bookings.findIndex(b => b.id === booking.id);
-  if (index >= 0) {
-    bookings[index] = { ...booking, updated_at: new Date().toISOString() };
-  } else {
-    bookings.push({ ...booking, created_at: new Date().toISOString(), updated_at: new Date().toISOString() });
-  }
-  setStorageItem('lc_bookings', JSON.stringify(bookings));
-  return bookings;
+  const enriched = { ...booking, updated_at: new Date().toISOString() };
+  if (!enriched.created_at) enriched.created_at = new Date().toISOString();
+  return sbUpsert<Booking>('bookings', 'lc_bookings', enriched);
 }
 
 export async function getBookingByCodeOrPhone(query: string): Promise<Booking | undefined> {
   if (isSupabaseConfigured() && supabase) {
-    const cleanQuery = query.trim();
-    const { data, error } = await supabase.from('bookings').select('*').or(`booking_code.eq.${cleanQuery},phone.eq.${cleanQuery}`);
-    if (!error && data && data.length > 0) return data[0] as Booking;
+    try {
+      const clean = query.trim();
+      const { data, error } = await supabase.from('bookings').select('*')
+        .or(`booking_code.eq.${clean},phone.eq.${clean}`);
+      if (!error && data && data.length > 0) return data[0] as Booking;
+    } catch { /* fallback */ }
   }
   const bookings = await getBookings();
-  const cleanQuery = query.trim().toLowerCase();
-  return bookings.find(b => b.booking_code.toLowerCase() === cleanQuery || b.phone.replace(/[^0-9]/g, '') === cleanQuery.replace(/[^0-9]/g, ''));
+  const clean = query.trim().toLowerCase();
+  return bookings.find(b =>
+    b.booking_code.toLowerCase() === clean ||
+    b.phone.replace(/[^0-9]/g, '') === clean.replace(/[^0-9]/g, '')
+  );
 }
 
-// ---------------------------------------------------------
+// ─────────────────────────────────────────────────────────────
 // PORTFOLIO METHODS
-// ---------------------------------------------------------
+// ─────────────────────────────────────────────────────────────
+
 export async function getPortfolio(): Promise<PortfolioItem[]> {
-  if (isSupabaseConfigured() && supabase) {
-    const { data, error } = await supabase.from('portfolio_items').select('*');
-    if (!error && data) return data as PortfolioItem[];
-  }
-  initDB();
-  const data = getStorageItem('lc_portfolio');
-  return data ? JSON.parse(data) : [];
+  return sbGet<PortfolioItem>('portfolio_items', 'lc_portfolio', 'order');
 }
 
 export async function savePortfolioItem(item: PortfolioItem): Promise<PortfolioItem[]> {
-  if (isSupabaseConfigured() && supabase) {
-    const { error } = await supabase.from('portfolio_items').upsert(item);
-    if (!error) return getPortfolio();
-  }
-  const portfolio = await getPortfolio();
-  const index = portfolio.findIndex(p => p.id === item.id);
-  if (index >= 0) portfolio[index] = item;
-  else portfolio.push(item);
-  setStorageItem('lc_portfolio', JSON.stringify(portfolio));
-  return portfolio;
+  return sbUpsert<PortfolioItem>('portfolio_items', 'lc_portfolio', item, 'order');
 }
 
 export async function deletePortfolioItem(id: string): Promise<PortfolioItem[]> {
-  if (isSupabaseConfigured() && supabase) {
-    const { error } = await supabase.from('portfolio_items').delete().eq('id', id);
-    if (!error) return getPortfolio();
-  }
-  const portfolio = (await getPortfolio()).filter(p => p.id !== id);
-  setStorageItem('lc_portfolio', JSON.stringify(portfolio));
-  return portfolio;
+  return sbDelete<PortfolioItem>('portfolio_items', 'lc_portfolio', id, 'order');
 }
 
-// ---------------------------------------------------------
+// ─────────────────────────────────────────────────────────────
 // TESTIMONIALS METHODS
-// ---------------------------------------------------------
+// ─────────────────────────────────────────────────────────────
+
 export async function getTestimonials(): Promise<Testimonial[]> {
-  if (isSupabaseConfigured() && supabase) {
-    const { data, error } = await supabase.from('testimonials').select('*');
-    if (!error && data) return data as Testimonial[];
-  }
-  initDB();
-  const data = getStorageItem('lc_testimonials');
-  return data ? JSON.parse(data) : [];
+  return sbGet<Testimonial>('testimonials', 'lc_testimonials');
 }
 
 export async function saveTestimonial(testimonial: Testimonial): Promise<Testimonial[]> {
-  if (isSupabaseConfigured() && supabase) {
-    const { error } = await supabase.from('testimonials').upsert(testimonial);
-    if (!error) return getTestimonials();
-  }
-  const testimonials = await getTestimonials();
-  const index = testimonials.findIndex(t => t.id === testimonial.id);
-  if (index >= 0) testimonials[index] = testimonial;
-  else testimonials.push(testimonial);
-  setStorageItem('lc_testimonials', JSON.stringify(testimonials));
-  return testimonials;
+  return sbUpsert<Testimonial>('testimonials', 'lc_testimonials', testimonial);
 }
 
 export async function deleteTestimonial(id: string): Promise<Testimonial[]> {
-  if (isSupabaseConfigured() && supabase) {
-    const { error } = await supabase.from('testimonials').delete().eq('id', id);
-    if (!error) return getTestimonials();
-  }
-  const testimonials = (await getTestimonials()).filter(t => t.id !== id);
-  setStorageItem('lc_testimonials', JSON.stringify(testimonials));
-  return testimonials;
+  return sbDelete<Testimonial>('testimonials', 'lc_testimonials', id);
 }
 
-export interface Brand {
-  id: string;
-  name: string;
-  logo_url: string;
-  is_active: boolean;
-  order: number;
-}
-
-export interface SchoolClient {
-  id: string;
-  name: string;
-  year: string;
-  order: number;
-}
+// ─────────────────────────────────────────────────────────────
+// BRANDS METHODS
+// ─────────────────────────────────────────────────────────────
 
 export async function getBrands(): Promise<Brand[]> {
-  if (isSupabaseConfigured()) {
-    const { data } = await supabase!.from('brands').select('*').order('order', { ascending: true });
-    return data || [];
-  }
-  return [];
+  return sbGet<Brand>('brands', 'lc_brands', 'order');
 }
 
 export async function saveBrand(brand: Brand): Promise<Brand[]> {
-  if (isSupabaseConfigured()) {
-    await supabase!.from('brands').upsert(brand);
-    return getBrands();
-  }
-  return [];
+  return sbUpsert<Brand>('brands', 'lc_brands', brand, 'order');
 }
 
 export async function deleteBrand(id: string): Promise<Brand[]> {
-  if (isSupabaseConfigured()) {
-    await supabase!.from('brands').delete().eq('id', id);
-    return getBrands();
-  }
-  return [];
+  return sbDelete<Brand>('brands', 'lc_brands', id, 'order');
 }
 
+// ─────────────────────────────────────────────────────────────
+// SCHOOL CLIENTS METHODS
+// ─────────────────────────────────────────────────────────────
+
 export async function getSchoolClients(): Promise<SchoolClient[]> {
-  if (isSupabaseConfigured()) {
-    const { data } = await supabase!.from('school_clients').select('*').order('order', { ascending: true });
-    return data || [];
-  }
-  return [];
+  return sbGet<SchoolClient>('school_clients', 'lc_school_clients', 'order');
 }
 
 export async function saveSchoolClient(client: SchoolClient): Promise<SchoolClient[]> {
-  if (isSupabaseConfigured()) {
-    await supabase!.from('school_clients').upsert(client);
-    return getSchoolClients();
-  }
-  return [];
+  return sbUpsert<SchoolClient>('school_clients', 'lc_school_clients', client, 'order');
 }
 
 export async function deleteSchoolClient(id: string): Promise<SchoolClient[]> {
-  if (isSupabaseConfigured()) {
-    await supabase!.from('school_clients').delete().eq('id', id);
-    return getSchoolClients();
-  }
-  return [];
+  return sbDelete<SchoolClient>('school_clients', 'lc_school_clients', id, 'order');
 }
 
-// ---------------------------------------------------------
+// ─────────────────────────────────────────────────────────────
 // PROJECTS METHODS
-// ---------------------------------------------------------
+// ─────────────────────────────────────────────────────────────
+
 export async function getProjects(): Promise<Project[]> {
   if (isSupabaseConfigured() && supabase) {
-    const { data, error } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
-    if (!error && data) return data as Project[];
+    try {
+      const { data, error } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
+      if (!error && data) return data as Project[];
+    } catch { /* fallback */ }
   }
   initDB();
-  const data = getStorageItem('lc_projects');
-  return data ? JSON.parse(data) : [];
+  const raw = getStorageItem('lc_projects');
+  return raw ? JSON.parse(raw) : [];
 }
 
 export async function saveProject(project: Project): Promise<Project[]> {
-  if (isSupabaseConfigured() && supabase) {
-    const { error } = await supabase.from('projects').upsert(project);
-    if (!error) return getProjects();
-  }
-  const projects = await getProjects();
-  const index = projects.findIndex(p => p.id === project.id);
-  if (index >= 0) projects[index] = project;
-  else projects.push(project);
-  setStorageItem('lc_projects', JSON.stringify(projects));
-  return projects;
+  return sbUpsert<Project>('projects', 'lc_projects', project);
 }
 
 export async function deleteProject(id: string): Promise<Project[]> {
-  if (isSupabaseConfigured() && supabase) {
-    const { error } = await supabase.from('projects').delete().eq('id', id);
-    if (!error) return getProjects();
-  }
-  const projects = (await getProjects()).filter(p => p.id !== id);
-  setStorageItem('lc_projects', JSON.stringify(projects));
-  return projects;
+  return sbDelete<Project>('projects', 'lc_projects', id);
 }
 
-// ---------------------------------------------------------
+// ─────────────────────────────────────────────────────────────
 // PAYMENTS METHODS
-// ---------------------------------------------------------
+// ─────────────────────────────────────────────────────────────
+
 export async function getPayments(): Promise<ProjectPayment[]> {
-  if (isSupabaseConfigured() && supabase) {
-    const { data, error } = await supabase.from('project_payments').select('*').order('due_date', { ascending: true });
-    if (!error && data) return data as ProjectPayment[];
-  }
-  initDB();
-  const data = getStorageItem('lc_payments');
-  return data ? JSON.parse(data) : [];
+  return sbGet<ProjectPayment>('project_payments', 'lc_payments', 'due_date');
 }
 
 export async function savePayment(payment: ProjectPayment): Promise<ProjectPayment[]> {
-  if (isSupabaseConfigured() && supabase) {
-    const { error } = await supabase.from('project_payments').upsert(payment);
-    if (!error) return getPayments();
-  }
-  const payments = await getPayments();
-  const index = payments.findIndex(p => p.id === payment.id);
-  if (index >= 0) payments[index] = payment;
-  else payments.push(payment);
-  setStorageItem('lc_payments', JSON.stringify(payments));
-  return payments;
+  return sbUpsert<ProjectPayment>('project_payments', 'lc_payments', payment, 'due_date');
 }
 
 export async function deletePayment(id: string): Promise<ProjectPayment[]> {
-  if (isSupabaseConfigured() && supabase) {
-    const { error } = await supabase.from('project_payments').delete().eq('id', id);
-    if (!error) return getPayments();
-  }
-  const payments = (await getPayments()).filter(p => p.id !== id);
-  setStorageItem('lc_payments', JSON.stringify(payments));
-  return payments;
+  return sbDelete<ProjectPayment>('project_payments', 'lc_payments', id, 'due_date');
 }
 
-// ---------------------------------------------------------
+// ─────────────────────────────────────────────────────────────
 // EXPENSES METHODS
-// ---------------------------------------------------------
+// ─────────────────────────────────────────────────────────────
+
 export async function getExpenses(): Promise<Expense[]> {
   if (isSupabaseConfigured() && supabase) {
-    const { data, error } = await supabase.from('expenses').select('*').order('expense_date', { ascending: false });
-    if (!error && data) return data as Expense[];
+    try {
+      const { data, error } = await supabase.from('expenses').select('*').order('expense_date', { ascending: false });
+      if (!error && data) return data as Expense[];
+    } catch { /* fallback */ }
   }
   initDB();
-  const data = getStorageItem('lc_expenses');
-  return data ? JSON.parse(data) : [];
+  const raw = getStorageItem('lc_expenses');
+  return raw ? JSON.parse(raw) : [];
 }
 
 export async function saveExpense(expense: Expense): Promise<Expense[]> {
-  if (isSupabaseConfigured() && supabase) {
-    const { error } = await supabase.from('expenses').upsert(expense);
-    if (!error) return getExpenses();
-  }
-  const expenses = await getExpenses();
-  const index = expenses.findIndex(p => p.id === expense.id);
-  if (index >= 0) expenses[index] = expense;
-  else expenses.push(expense);
-  setStorageItem('lc_expenses', JSON.stringify(expenses));
-  return expenses;
+  return sbUpsert<Expense>('expenses', 'lc_expenses', expense);
 }
 
 export async function deleteExpense(id: string): Promise<Expense[]> {
-  if (isSupabaseConfigured() && supabase) {
-    const { error } = await supabase.from('expenses').delete().eq('id', id);
-    if (!error) return getExpenses();
-  }
-  const expenses = (await getExpenses()).filter(p => p.id !== id);
-  setStorageItem('lc_expenses', JSON.stringify(expenses));
-  return expenses;
+  return sbDelete<Expense>('expenses', 'lc_expenses', id);
 }

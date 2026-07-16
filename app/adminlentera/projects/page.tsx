@@ -5,22 +5,25 @@ import { getProjects, saveProject, deleteProject, Project } from '@/lib/db';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 import AdminLayout from '@/components/AdminLayout';
 import Link from 'next/link';
+import { useModal } from '@/components/admin/ModalContext';
 
 export default function ProjectsAdmin() {
+  const { showAlert, showConfirm } = useModal();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<Partial<Project>>({});
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const fetchData = async () => {
     const data = await getProjects();
     setProjects(data);
     setLoading(false);
   };
+
+  useEffect(() => {
+    fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
 
   const handleEdit = (project: Project) => {
     setFormData(project);
@@ -28,7 +31,7 @@ export default function ProjectsAdmin() {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('Yakin ingin menghapus proyek ini?')) {
+    if (await showConfirm('Yakin ingin menghapus proyek ini?')) {
       const updated = await deleteProject(id);
       setProjects(updated);
     }
@@ -97,7 +100,7 @@ export default function ProjectsAdmin() {
           <div>
             <label className="block text-xs font-bold text-gray-500 mb-1">Status</label>
             <select className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm"
-                    value={formData.status || 'active'} onChange={e => setFormData({...formData, status: e.target.value as any})}>
+                    value={formData.status || 'active'} onChange={e => setFormData({...formData, status: e.target.value as 'active' | 'completed' | 'cancelled'})}>
               <option value="active">Aktif</option>
               <option value="completed">Selesai</option>
               <option value="cancelled">Dibatalkan</option>

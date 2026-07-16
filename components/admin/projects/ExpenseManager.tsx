@@ -1,5 +1,6 @@
 import { Expense, deleteExpense } from '@/lib/db';
 import { Edit2, Trash2 } from 'lucide-react';
+import { useModal } from '@/components/admin/ModalContext';
 
 export default function ExpenseManager({
   expenses,
@@ -20,6 +21,8 @@ export default function ExpenseManager({
   fetchData: () => void;
   formatCurrency: (amount: number) => string;
 }) {
+  const { showConfirm } = useModal();
+
   return (
     <div className="space-y-4">
       {isEditingExpense ? (
@@ -69,7 +72,7 @@ export default function ExpenseManager({
                   <td className="p-4 text-red-500 font-semibold">{formatCurrency(exp.amount)}</td>
                   <td className="p-4 text-right">
                     <button onClick={() => { setExpenseForm(exp); setIsEditingExpense(true); }} className="p-2 text-gray-400 hover:text-[#c29631]"><Edit2 size={14}/></button>
-                    <button onClick={async () => { if(confirm('Hapus pengeluaran ini?')) { await deleteExpense(exp.id); fetchData(); } }} className="p-2 text-gray-400 hover:text-red-500"><Trash2 size={14}/></button>
+                    <button onClick={async () => { if(await showConfirm('Hapus pengeluaran ini?')) { await deleteExpense(exp.id); fetchData(); } }} className="p-2 text-gray-400 hover:text-red-500"><Trash2 size={14}/></button>
                   </td>
                 </tr>
               ))}

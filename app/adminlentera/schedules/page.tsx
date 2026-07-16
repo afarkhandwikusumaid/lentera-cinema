@@ -2,8 +2,10 @@
 import { useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import { Calendar, Plus, Users, X } from 'lucide-react';
+import { useModal } from '@/components/admin/ModalContext';
 
 export default function SchedulesPage() {
+  const { showAlert, showConfirm } = useModal();
   const [isOpen, setIsOpen] = useState(false);
   return (
     <AdminLayout>
@@ -72,7 +74,7 @@ export default function SchedulesPage() {
             </div>
 
             {/* Body */}
-            <form onSubmit={(e) => { e.preventDefault(); setIsOpen(false); alert('Jadwal berhasil ditambahkan!'); }} className="p-6 space-y-4 max-h-[85vh] overflow-y-auto bg-white">
+            <form onSubmit={async (e) => { e.preventDefault(); setIsOpen(false); await showAlert('Jadwal berhasil ditambahkan!'); }} className="p-6 space-y-4 max-h-[85vh] overflow-y-auto bg-white">
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block">Nama Klien / Acara</label>
                 <input

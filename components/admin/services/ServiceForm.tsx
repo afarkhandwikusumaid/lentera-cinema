@@ -1,4 +1,5 @@
 import { Service } from '@/lib/db';
+import { useModal } from '@/components/admin/ModalContext';
 
 export default function ServiceForm({
   currentService,
@@ -11,6 +12,7 @@ export default function ServiceForm({
   handleSaveService: (e: React.FormEvent) => void;
   setIsEditing: (v: boolean) => void;
 }) {
+  const { showAlert } = useModal();
   return (
     <div className="bg-white p-6 rounded-xl border border-gray-200 mb-8">
       <h2 className="text-xl font-bold mb-4">{currentService.id ? 'Edit Kategori Layanan' : 'Kategori Layanan Baru'}</h2>
@@ -40,16 +42,9 @@ export default function ServiceForm({
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Thumbnail Image</label>
-            <div className="flex gap-2">
-              <input 
-                type="text" 
-                value={currentService.image_url || ''} 
-                onChange={e => setCurrentService({...currentService, image_url: e.target.value})} 
-                className="flex-1 p-2 border rounded focus:ring-2 focus:ring-black outline-none bg-white text-black text-sm" 
-                placeholder="URL Gambar / Upload"
-              />
-              <label className="bg-black text-white px-3 py-2 rounded text-sm font-bold cursor-pointer hover:bg-gray-800 transition-colors whitespace-nowrap">
-                Pilih File
+            <div className="flex flex-col gap-3">
+              <label className="bg-black text-white px-4 py-2 rounded text-sm font-bold cursor-pointer hover:bg-gray-800 transition-colors inline-block w-max">
+                Pilih File dari Perangkat
                 <input 
                   type="file" 
                   accept="image/*" 
@@ -58,7 +53,7 @@ export default function ServiceForm({
                     const file = e.target.files?.[0];
                     if (!file) return;
                     if (file.size > 1 * 1024 * 1024) {
-                      alert('Ukuran file maksimal 1MB');
+                      await showAlert('Ukuran file maksimal 1MB');
                       return;
                     }
                     const formData = new FormData();
@@ -68,21 +63,21 @@ export default function ServiceForm({
                     try {
                       const res = await fetch('/api/upload', { method: 'POST', body: formData });
                       const data = await res.json();
-                      if (data.success) {
+                      if (data.success || data.url) {
                         setCurrentService({...currentService, image_url: data.url});
                       } else {
-                        alert(data.message || 'Gagal mengunggah foto');
+                        await showAlert(data.message || 'Gagal mengunggah foto');
                       }
-                    } catch (err) {
-                      alert('Terjadi kesalahan saat mengunggah foto');
+                    } catch {
+                      await showAlert('Terjadi kesalahan saat mengunggah foto');
                     }
                   }} 
                 />
               </label>
-            </div>
             {currentService.image_url && (
               <img src={currentService.image_url} alt="Thumbnail preview" className="mt-2 h-20 w-auto rounded object-cover border border-gray-200" />
             )}
+            </div>
           </div>
         </div>
         <div className="flex items-center gap-2">

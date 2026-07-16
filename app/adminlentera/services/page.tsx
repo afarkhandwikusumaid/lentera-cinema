@@ -6,8 +6,10 @@ import AdminLayout from '@/components/AdminLayout';
 import BenefitManager from '@/components/admin/services/BenefitManager';
 import ServiceForm from '@/components/admin/services/ServiceForm';
 import ServiceList from '@/components/admin/services/ServiceList';
+import { useModal } from '@/components/admin/ModalContext';
 
 export default function ServicesAdmin() {
+  const { showAlert, showConfirm } = useModal();
   const [services, setServices] = useState<Service[]>([]);
   const [benefits, setBenefits] = useState<ServiceBenefit[]>([]);
   const [loading, setLoading] = useState(true);
@@ -19,11 +21,6 @@ export default function ServicesAdmin() {
   const [isEditingBenefit, setIsEditingBenefit] = useState(false);
   const [currentBenefit, setCurrentBenefit] = useState<Partial<ServiceBenefit>>({});
   const [featuresText, setFeaturesText] = useState('');
-
-  useEffect(() => {
-    loadServices();
-  }, []);
-
   async function loadServices() {
     const sData = await getServices();
     setServices(sData);
@@ -31,6 +28,12 @@ export default function ServicesAdmin() {
     setBenefits(bData);
     setLoading(false);
   }
+
+  useEffect(() => {
+    loadServices();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
 
   const handleSaveService = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,7 +57,7 @@ export default function ServicesAdmin() {
   };
 
   const handleDeleteService = async (id: string) => {
-    if (confirm('Yakin ingin menghapus layanan ini? Semua benefit di dalamnya juga akan terhapus.')) {
+    if (await showConfirm('Yakin ingin menghapus layanan ini? Semua benefit di dalamnya juga akan terhapus.')) {
       const updated = await deleteService(id);
       setServices(updated);
     }
@@ -106,7 +109,7 @@ export default function ServicesAdmin() {
   };
 
   const handleDeleteBenefit = async (id: string) => {
-    if (confirm('Yakin ingin menghapus benefit/sub-layanan ini?')) {
+    if (await showConfirm('Yakin ingin menghapus benefit/sub-layanan ini?')) {
       const updated = await deleteServiceBenefit(id);
       setBenefits(updated);
     }

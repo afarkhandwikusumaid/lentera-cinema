@@ -4,17 +4,14 @@ import { useState, useEffect } from 'react';
 import { getExpenses, saveExpense, deleteExpense, Expense } from '@/lib/db';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 import AdminLayout from '@/components/AdminLayout';
+import { useModal } from '@/components/admin/ModalContext';
 
 export default function ExpensesAdmin() {
+  const { showAlert, showConfirm } = useModal();
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<Partial<Expense>>({});
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const fetchData = async () => {
     const data = await getExpenses();
     // Only show universal expenses here
@@ -22,13 +19,19 @@ export default function ExpensesAdmin() {
     setLoading(false);
   };
 
+  useEffect(() => {
+    fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
   const handleEdit = (expense: Expense) => {
     setFormData(expense);
     setIsEditing(true);
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('Yakin ingin menghapus pengeluaran ini?')) {
+    if (await showConfirm('Yakin ingin menghapus pengeluaran ini?')) {
       await deleteExpense(id);
       fetchData();
     }

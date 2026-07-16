@@ -6,8 +6,10 @@ import AdminLayout from '@/components/AdminLayout';
 import { getTestimonials, saveTestimonial, deleteTestimonial, Testimonial } from '@/lib/db';
 import TestimonialList from '@/components/admin/testimonials/TestimonialList';
 import TestimonialFormModal from '@/components/admin/testimonials/TestimonialFormModal';
+import { useModal } from '@/components/admin/ModalContext';
 
 export default function AdminTestimonials() {
+  const { showAlert, showConfirm } = useModal();
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
@@ -52,7 +54,7 @@ export default function AdminTestimonials() {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('Apakah Anda yakin ingin menghapus testimoni ini?')) {
+    if (await showConfirm('Apakah Anda yakin ingin menghapus testimoni ini?')) {
       await deleteTestimonial(id);
       await loadData();
     }

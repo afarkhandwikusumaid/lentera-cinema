@@ -1,10 +1,11 @@
 import { motion } from 'framer-motion';
+import { type LucideIcon } from 'lucide-react';
 
 interface Stat {
   title: string;
   value: string;
   subtitle: string;
-  icon: any;
+  icon: LucideIcon;
   color: string;
   bg: string;
   border: string;

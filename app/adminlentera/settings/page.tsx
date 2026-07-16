@@ -10,16 +10,17 @@ export default function SettingsAdmin() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
-
-  useEffect(() => {
-    loadSettings();
-  }, []);
-
   async function loadSettings() {
     const data = await getSettings();
     setSettings(data);
     setLoading(false);
   }
+
+  useEffect(() => {
+    loadSettings();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();

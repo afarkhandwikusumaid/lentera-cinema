@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+
 import { getPortfolio, getServices, PortfolioItem, Service } from '@/lib/db';
 import Nav from '@/components/PublicNav';
 import Footer from '@/components/PublicFooter';
@@ -26,7 +27,7 @@ export default function PortfolioPage() {
   const [filter, setFilter] = useState('all');
   const [activeTab, setActiveTab] = useState<'image' | 'video'>('image');
   const [activeIndex, setActiveIndex] = useState(0);
-  const [modalImage, setModalImage] = useState<any>(null);
+  const [modalImage, setModalImage] = useState<Partial<PortfolioItem> & { service_name?: string } | null>(null);
 
   useEffect(() => {
     async function loadData() {
@@ -140,7 +141,7 @@ export default function PortfolioPage() {
                             transform: `translateX(${translateX}%) scale(${scale})`, 
                             opacity, 
                             filter: `blur(${blur}px)`,
-                            pointerEvents: pointerEvents as any,
+                            pointerEvents: pointerEvents as React.CSSProperties['pointerEvents'],
                             width: '70%', 
                             maxWidth: '380px',
                             aspectRatio: '3/4'
