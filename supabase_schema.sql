@@ -174,9 +174,9 @@ INSERT INTO services (id, name, slug, subtitle, description, is_active) VALUES
 ON CONFLICT DO NOTHING;
 
 INSERT INTO service_benefits (id, service_id, name, description, features, is_active, "order") VALUES 
-('sb-1', 'srv-1', 'Paket Gold', 'Paket hemat untuk dokumentasi lengkap', '["1 Videographer", "1 Photographer", "1 Menit Cinematic Video", "100+ Edited Photos"]', true, 1),
-('sb-2', 'srv-1', 'Paket Platinum', 'Paket premium dengan drone', '["2 Videographer", "2 Photographer", "Drone Pilot", "3 Menit Cinematic", "All Photos Color Graded", "Exclusive Album"]', true, 2),
-('sb-3', 'srv-2', 'Paket Epic', 'Dokumentasi yearbook 1 angkatan', '["Konsep Storyline", "Sutradara & DOP", "Drone & Gimbal", "Behind The Scene"]', true, 1)
+('sb-1', 'srv-1', 'Paket Gold', 'Paket hemat untuk dokumentasi lengkap', '["1 Videographer", "1 Photographer", "1 Menit Cinematic Video", "100+ Edited Photos"]'::jsonb, true, 1),
+('sb-2', 'srv-1', 'Paket Platinum', 'Paket premium dengan drone', '["2 Videographer", "2 Photographer", "Drone Pilot", "3 Menit Cinematic", "All Photos Color Graded", "Exclusive Album"]'::jsonb, true, 2),
+('sb-3', 'srv-2', 'Paket Epic', 'Dokumentasi yearbook 1 angkatan', '["Konsep Storyline", "Sutradara & DOP", "Drone & Gimbal", "Behind The Scene"]'::jsonb, true, 1)
 ON CONFLICT DO NOTHING;
 
 INSERT INTO brands (id, name, logo_url, is_active, "order") VALUES 
