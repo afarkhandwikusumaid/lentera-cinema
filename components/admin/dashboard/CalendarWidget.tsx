@@ -77,7 +77,7 @@ export default function CalendarWidget({
         </div>
         <div className="flex items-center gap-2 bg-bg-elevated/30 p-1.5 rounded-lg border border-border/20">
           <span className="w-3.5 h-3.5 rounded-md bg-danger shadow-sm shadow-danger/20 flex-shrink-0 flex items-center justify-center ring-2 ring-danger/30">
-            <span className="w-1 h-1 bg-white rounded-full" />
+            <span className="w-1 h-1 bg-bg-surface rounded-full" />
           </span>
           <span className="font-medium">Bentrok (Lebih dari 1 confirmed)</span>
         </div>

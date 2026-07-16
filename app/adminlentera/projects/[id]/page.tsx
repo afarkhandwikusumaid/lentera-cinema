@@ -79,8 +79,8 @@ export default function ProjectDetailAdmin() {
     fetchData();
   };
 
-  if (loading) return <AdminLayout><div className="p-10 text-gray-500">Memuat data proyek...</div></AdminLayout>;
-  if (!project) return <AdminLayout><div className="p-10 text-gray-500">Proyek tidak ditemukan.</div></AdminLayout>;
+  if (loading) return <AdminLayout><div className="p-10 text-text-secondary">Memuat data proyek...</div></AdminLayout>;
+  if (!project) return <AdminLayout><div className="p-10 text-text-secondary">Proyek tidak ditemukan.</div></AdminLayout>;
 
   const totalPaid = payments.filter(p => p.status === 'paid').reduce((sum, p) => sum + p.amount, 0);
   const totalExpense = expenses.reduce((sum, e) => sum + e.amount, 0);
@@ -97,11 +97,11 @@ export default function ProjectDetailAdmin() {
           formatCurrency={formatCurrency}
         />
 
-        <div className="flex gap-4 border-b border-gray-200">
-          <button onClick={() => setActiveTab('payments')} className={`pb-3 text-sm font-bold border-b-2 transition-colors ${activeTab === 'payments' ? 'border-[#c29631] text-[#c29631]' : 'border-transparent text-gray-500 hover:text-gray-900'}`}>
+        <div className="flex gap-4 border-b border-border">
+          <button onClick={() => setActiveTab('payments')} className={`pb-3 text-sm font-bold border-b-2 transition-colors ${activeTab === 'payments' ? 'border-[#c29631] text-[#c29631]' : 'border-transparent text-text-secondary hover:text-text-primary'}`}>
             Termin Pembayaran
           </button>
-          <button onClick={() => setActiveTab('expenses')} className={`pb-3 text-sm font-bold border-b-2 transition-colors ${activeTab === 'expenses' ? 'border-[#c29631] text-[#c29631]' : 'border-transparent text-gray-500 hover:text-gray-900'}`}>
+          <button onClick={() => setActiveTab('expenses')} className={`pb-3 text-sm font-bold border-b-2 transition-colors ${activeTab === 'expenses' ? 'border-[#c29631] text-[#c29631]' : 'border-transparent text-text-secondary hover:text-text-primary'}`}>
             Pengeluaran Proyek
           </button>
         </div>
