@@ -60,10 +60,10 @@ export default function AdminSidebar({
                     const isGroupActive = link.subLinks.some(sub => pathname.startsWith(sub.href));
                     return (
                       <div key={link.name} className="flex flex-col">
-                        <div className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all duration-300 ${
-                          isGroupActive ? 'text-white' : 'text-[#888]'
+                        <div className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] transition-all duration-300 ${
+                          isGroupActive ? 'text-white font-bold' : 'text-[#888] font-semibold hover:text-white hover:bg-[#222]'
                         }`}>
-                          <Icon className={`h-5 w-5 ${isGroupActive ? 'text-[#c29631]' : 'text-[#555]'}`} strokeWidth={2} />
+                          <Icon className={`h-5 w-5 ${isGroupActive ? 'text-white' : 'text-[#555]'}`} strokeWidth={isGroupActive ? 2.5 : 2} />
                           {link.name}
                         </div>
                         <div className="ml-6 pl-4 border-l-2 border-[#333] flex flex-col gap-1 mt-1">
@@ -76,12 +76,12 @@ export default function AdminSidebar({
                                 onClick={() => setIsOpen(false)}
                                 className={`px-4 py-2.5 rounded-lg text-[13px] font-medium transition-all duration-300 relative ${
                                   isSubActive
-                                    ? 'bg-gradient-to-r from-[#e8b84b]/15 to-transparent text-[#e8b84b] font-bold'
+                                    ? 'bg-[#f3e8c8] text-black font-bold'
                                     : 'text-[#888] hover:text-white hover:bg-[#222]'
                                 }`}
                               >
                                 {isSubActive && (
-                                  <span className="absolute -left-[19px] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[#c29631] border-2 border-[#111] ring-2 ring-[#111]" />
+                                  <span className="absolute -left-[19px] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-black border-2 border-[#111] ring-2 ring-[#111]" />
                                 )}
                                 {sub.name}
                               </Link>
@@ -98,14 +98,13 @@ export default function AdminSidebar({
                       key={link.name}
                       href={link.href || '#'}
                       onClick={() => setIsOpen(false)}
-                      className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all duration-300 relative overflow-hidden group ${
+                      className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] transition-all duration-300 relative group ${
                         active
-                          ? 'bg-gradient-to-r from-[#e8b84b]/15 to-transparent text-[#e8b84b]'
-                          : 'text-[#888] hover:bg-[#222] hover:text-white'
+                          ? 'bg-[#f3e8c8] text-black font-bold shadow-sm'
+                          : 'text-[#888] font-semibold hover:bg-[#222] hover:text-white'
                       }`}
                     >
-                      {active && <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#e8b84b] rounded-r-full" />}
-                      <Icon className={`h-5 w-5 transition-transform group-hover:scale-110 ${active ? 'text-[#e8b84b]' : 'text-[#555]'}`} strokeWidth={2} />
+                      <Icon className={`h-5 w-5 transition-transform group-hover:scale-110 ${active ? 'text-black' : 'text-[#555]'}`} strokeWidth={active ? 2.5 : 2} />
                       {link.name}
                     </Link>
                   );

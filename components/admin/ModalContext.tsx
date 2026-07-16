@@ -63,16 +63,16 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
       {children}
       {modalState.isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-bg-surface rounded-2xl shadow-xl w-full max-w-sm overflow-hidden animate-in fade-in zoom-in duration-200">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden animate-in fade-in zoom-in duration-200">
             <div className="p-6">
-              <h3 className="text-lg font-bold text-text-primary mb-2">Konfirmasi</h3>
-              <p className="text-text-secondary text-sm">{modalState.message}</p>
+              <h3 className="text-lg font-bold text-gray-900 mb-2">Konfirmasi</h3>
+              <p className="text-gray-500 text-sm">{modalState.message}</p>
             </div>
-            <div className="px-6 py-4 bg-bg-elevated flex justify-end gap-3 border-t border-border/50">
+            <div className="px-6 py-4 bg-gray-50 flex justify-end gap-3 border-t border-gray-100">
               {modalState.type === 'confirm' && (
                 <button
                   onClick={() => handleClose(false)}
-                  className="px-4 py-2 text-sm font-bold text-text-secondary bg-bg-surface border border-border rounded-lg hover:bg-bg-elevated transition-colors"
+                  className="px-4 py-2 text-sm font-bold text-gray-500 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                 >
                   Batal
                 </button>

@@ -92,7 +92,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex flex-col md:flex-row text-white selection:bg-[#c29631]/30">
+    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row text-gray-900 selection:bg-[#c29631]/30">
       <AdminHeader isOpen={isOpen} setIsOpen={setIsOpen} />
 
       <AdminSidebar 
@@ -113,9 +113,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       )}
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto bg-[#0a0a0a] relative">
-        <div className="absolute inset-0 bg-[radial-gradient(#333_1px,transparent_1px)] [background-size:24px_24px] opacity-30" />
-        <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-transparent to-[#c29631]/5" />
+      <main className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto bg-gray-50 relative" style={{ '--border': '#e5e7eb' } as React.CSSProperties}>
         <div className="p-6 md:p-10 max-w-7xl mx-auto w-full relative z-10">
           {children}
         </div>

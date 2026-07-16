@@ -16,8 +16,8 @@ export default function ServiceList({
     <div>
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-2xl font-bold font-heading text-text-primary mb-1">Manajemen Layanan</h1>
-          <p className="text-sm text-text-secondary">Kelola kategori utama layanan (Misal: Yearbook, Wedding)</p>
+          <h1 className="text-2xl font-bold font-heading text-gray-900 mb-1">Manajemen Layanan</h1>
+          <p className="text-sm text-gray-500">Kelola kategori utama layanan (Misal: Yearbook, Wedding)</p>
         </div>
         <button 
           onClick={() => startEditService()}
@@ -28,10 +28,10 @@ export default function ServiceList({
         </button>
       </div>
 
-      <div className="bg-bg-surface rounded-xl border border-border overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-bg-elevated border-b border-border text-text-secondary text-sm">
+            <tr className="bg-gray-50 border-b border-gray-200 text-gray-500 text-sm">
               <th className="p-4 font-medium w-16">Foto</th>
               <th className="p-4 font-medium">Layanan</th>
               <th className="p-4 font-medium">Subtitle</th>
@@ -41,26 +41,26 @@ export default function ServiceList({
           </thead>
           <tbody>
             {services.map(service => (
-              <tr key={service.id} className="border-b border-border/50">
+              <tr key={service.id} className="border-b border-gray-100">
                 <td className="p-4">
                   {service.image_url ? (
-                    <img src={service.image_url} alt={service.name} className="w-12 h-12 rounded-lg object-cover border border-border" />
+                    <img src={service.image_url} alt={service.name} className="w-12 h-12 rounded-lg object-cover border border-gray-200" />
                   ) : (
-                    <div className="w-12 h-12 rounded-lg bg-[#222] flex items-center justify-center text-text-secondary/70 border border-border">
+                    <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400 border border-gray-200">
                       <ImageIcon size={16} />
                     </div>
                   )}
                 </td>
                 <td className="p-4">
-                  <div className="font-bold text-text-primary">{service.name}</div>
-                  <div className="text-sm text-text-secondary mt-1">/{service.slug}</div>
+                  <div className="font-bold text-gray-900">{service.name}</div>
+                  <div className="text-sm text-gray-500 mt-1">/{service.slug}</div>
                 </td>
-                <td className="p-4"><span className="text-sm text-text-secondary">{service.subtitle || '-'}</span></td>
+                <td className="p-4"><span className="text-sm text-gray-500">{service.subtitle || '-'}</span></td>
                 <td className="p-4">
                   <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase border ${
                     service.is_active 
                       ? 'bg-green-500/10 text-green-400 border-green-500/20' 
-                      : 'bg-[#222] text-[#888] border-[#333]'
+                      : 'bg-gray-100 text-[#888] border-gray-200'
                   }`}>
                     {service.is_active ? 'Aktif' : 'Tidak Aktif'}
                   </span>
@@ -68,7 +68,7 @@ export default function ServiceList({
                 <td className="p-4">
                   <div className="flex justify-end gap-2">
                     <a 
-                      href="/adminlentera/portfolio" 
+                      href={`/adminlentera/portfolio/foto?service_id=${service.id}`}
                       title="Kelola Galeri Portofolio"
                       className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold text-[#e8b84b] bg-[#e8b84b]/10 border border-[#e8b84b]/20 rounded-lg transition-colors hover:bg-[#e8b84b]/20"
                     >
@@ -77,14 +77,14 @@ export default function ServiceList({
                     <button 
                       onClick={() => startManageBenefits(service)} 
                       title="Kelola Benefit Layanan"
-                      className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold text-white bg-[#222] border border-[#333] rounded-lg transition-colors hover:bg-[#333] hover:border-[#444]"
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold text-white bg-gray-100 border border-gray-200 rounded-lg transition-colors hover:bg-[#333] hover:border-[#444]"
                     >
                       <Settings size={14} /> Benefit
                     </button>
                     <button 
                       onClick={() => startEditService(service)} 
                       title="Edit Layanan"
-                      className="p-1.5 text-[#888] bg-[#222] border border-[#333] hover:bg-[#333] hover:text-white rounded-lg transition-colors"
+                      className="p-1.5 text-[#888] bg-gray-100 border border-gray-200 hover:bg-[#333] hover:text-white rounded-lg transition-colors"
                     >
                       <Edit2 size={14} />
                     </button>
@@ -100,7 +100,7 @@ export default function ServiceList({
               </tr>
             ))}
             {services.length === 0 && (
-              <tr><td colSpan={4} className="p-8 text-center text-text-secondary">Belum ada layanan ditemukan.</td></tr>
+              <tr><td colSpan={4} className="p-8 text-center text-gray-500">Belum ada layanan ditemukan.</td></tr>
             )}
           </tbody>
         </table>

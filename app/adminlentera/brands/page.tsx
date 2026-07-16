@@ -90,77 +90,29 @@ export default function BrandsAdmin() {
 
   if (loading) return (
     <AdminLayout>
-      <div className="p-10 text-text-secondary">Memuat data...</div>
+      <div className="p-10 text-gray-500">Memuat data...</div>
     </AdminLayout>
   );
 
-  if (isEditing) {
-    return (
-      <AdminLayout>
-      <div className="space-y-6">
-      <div className="bg-bg-surface p-6 rounded-2xl border border-border">
-        <h2 className="text-xl font-bold text-text-primary mb-6">{formData.id ? 'Edit Brand/Mitra' : 'Tambah Brand/Mitra'}</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-xs font-bold text-text-secondary mb-1">Nama Brand</label>
-            <input required type="text" className="w-full bg-bg-elevated border border-border rounded-lg p-2.5 text-sm" 
-                   value={formData.name || ''} onChange={e => setFormData({...formData, name: e.target.value})} />
-          </div>
-          <div>
-            <label className="block text-xs font-bold text-text-secondary mb-1">Logo (Maks 1MB, format gambar diizinkan)</label>
-            {formData.logo_url && !uploadFile && (
-              <div className="mb-2">
-                <img src={formData.logo_url} alt="Current logo" className="h-12 object-contain bg-[#222] p-2 rounded border" />
-              </div>
-            )}
-            <input type="file" accept="image/*" className="w-full bg-bg-elevated border border-border rounded-lg p-2 text-sm" 
-                   onChange={e => {
-                     if (e.target.files && e.target.files.length > 0) {
-                       setUploadFile(e.target.files[0]);
-                     }
-                   }} />
-            <p className="text-[10px] text-text-secondary/70 mt-1">Kosongkan jika tidak ingin mengubah logo saat ini.</p>
-          </div>
-          <div>
-            <label className="block text-xs font-bold text-text-secondary mb-1">Urutan Tampil</label>
-            <input type="number" className="w-full bg-bg-elevated border border-border rounded-lg p-2.5 text-sm" 
-                   value={formData.order || 0} onChange={e => setFormData({...formData, order: parseInt(e.target.value) || 0})} />
-          </div>
-          <div className="flex items-center gap-2 mt-2">
-            <input type="checkbox" id="active" checked={formData.is_active ?? true} 
-                   onChange={e => setFormData({...formData, is_active: e.target.checked})} />
-            <label htmlFor="active" className="text-sm font-medium text-text-primary">Aktif (Tampil di website)</label>
-          </div>
-          <div className="flex gap-3 pt-4">
-            <button type="submit" disabled={uploading} className="bg-[#c29631] text-white px-4 py-2 rounded-lg text-sm font-bold disabled:opacity-50">
-              {uploading ? 'Menyimpan...' : 'Simpan'}
-            </button>
-            <button type="button" onClick={() => setIsEditing(false)} disabled={uploading} className="bg-[#222] text-text-primary px-4 py-2 rounded-lg text-sm font-bold disabled:opacity-50">Batal</button>
-          </div>
-        </form>
-      </div>
-      </div>
-      </AdminLayout>
-    );
-  }
+
 
   return (
     <AdminLayout>
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-2xl font-bold font-heading text-text-primary mb-1">Mitra & Brand Klien</h1>
-          <p className="text-sm text-text-secondary">Kelola logo klien besar (BUMN, Perusahaan, dll)</p>
+          <h1 className="text-2xl font-bold font-heading text-gray-900 mb-1">Mitra & Brand Klien</h1>
+          <p className="text-sm text-gray-500">Kelola logo klien besar (BUMN, Perusahaan, dll)</p>
         </div>
         <button onClick={() => { setFormData({}); setUploadFile(null); setIsEditing(true); }} className="flex items-center gap-2 px-4 py-2 bg-accent-primary text-white rounded-xl font-bold transition-colors self-start md:self-auto">
           <Plus className="h-4 w-4" /> Tambah Brand
         </button>
       </div>
 
-      <div className="bg-bg-surface rounded-2xl border border-border/50 overflow-hidden">
+      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-bg-elevated border-b border-border/50 text-[10px] uppercase tracking-widest text-text-secondary font-bold">
+            <tr className="bg-gray-50 border-b border-gray-100 text-[10px] uppercase tracking-widest text-gray-500 font-bold">
               <th className="p-4 w-12 text-center">Urutan</th>
               <th className="p-4">Logo</th>
               <th className="p-4">Nama Brand</th>
@@ -171,34 +123,96 @@ export default function BrandsAdmin() {
           <tbody>
             {brands.map((brand, i) => (
               <tr key={brand.id} className="border-b border-gray-50 transition-colors">
-                <td className="p-4 text-center text-text-secondary/70 font-medium">{brand.order}</td>
+                <td className="p-4 text-center text-gray-400 font-medium">{brand.order}</td>
                 <td className="p-4">
-                  <div className="h-10 w-24 bg-[#222] rounded flex items-center justify-center p-2">
+                  <div className="h-10 w-24 bg-gray-100 rounded flex items-center justify-center p-2">
                     <img src={brand.logo_url} alt={brand.name} className="max-h-full max-w-full object-contain mix-blend-multiply" />
                   </div>
                 </td>
-                <td className="p-4 font-bold text-text-primary text-sm">{brand.name}</td>
+                <td className="p-4 font-bold text-gray-900 text-sm">{brand.name}</td>
                 <td className="p-4 text-center">
-                  <span className={`inline-block px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${brand.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-text-secondary'}`}>
+                  <span className={`inline-block px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${brand.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-500'}`}>
                     {brand.is_active ? 'Aktif' : 'Nonaktif'}
                   </span>
                 </td>
                 <td className="p-4 text-right">
                   <div className="flex items-center justify-end gap-2 transition-opacity">
-                    <button onClick={() => handleEdit(brand)} className="p-2 text-text-secondary/70 bg-bg-surface rounded-lg border border-border/50"><Edit2 size={14}/></button>
-                    <button onClick={() => handleDelete(brand.id)} className="p-2 text-text-secondary/70 bg-bg-surface rounded-lg border border-border/50"><Trash2 size={14}/></button>
+                    <button onClick={() => handleEdit(brand)} className="p-2 text-gray-400 bg-white rounded-lg border border-gray-100"><Edit2 size={14}/></button>
+                    <button onClick={() => handleDelete(brand.id)} className="p-2 text-gray-400 bg-white rounded-lg border border-gray-100"><Trash2 size={14}/></button>
                   </div>
                 </td>
               </tr>
             ))}
             {brands.length === 0 && (
               <tr>
-                <td colSpan={5} className="p-8 text-center text-text-secondary/70">Belum ada brand terdaftar.</td>
+                <td colSpan={5} className="p-8 text-center text-gray-400">Belum ada brand terdaftar.</td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
+      
+      {/* Edit/Add Modal */}
+      {isEditing && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => !uploading && setIsEditing(false)}></div>
+          <div className="bg-white p-6 rounded-2xl border border-gray-200 w-full max-w-lg relative z-10 shadow-2xl">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold text-gray-900">{formData.id ? 'Edit Brand/Mitra' : 'Tambah Brand/Mitra'}</h2>
+              <button onClick={() => !uploading && setIsEditing(false)} className="text-gray-400 hover:text-gray-900">
+                <X size={20} />
+              </button>
+            </div>
+            
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-gray-500 mb-1">Nama Brand</label>
+                <input required type="text" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm outline-none focus:border-[#c29631]" 
+                       value={formData.name || ''} onChange={e => setFormData({...formData, name: e.target.value})} />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-500 mb-1">Logo (Maks 1MB, format gambar diizinkan)</label>
+                {formData.logo_url && !uploadFile && (
+                  <div className="mb-2">
+                    <img src={formData.logo_url} alt="Current logo" className="h-12 object-contain bg-gray-100 p-2 rounded border border-gray-200" />
+                  </div>
+                )}
+                <div className="relative group">
+                  <input type="file" accept="image/*" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" 
+                         onChange={e => {
+                           if (e.target.files && e.target.files.length > 0) {
+                             setUploadFile(e.target.files[0]);
+                           }
+                         }} />
+                  <div className="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm text-gray-500 group-hover:border-[#c29631]/50 transition-colors">
+                    <div className="bg-gray-100 border border-gray-200 px-3 py-1.5 rounded-md text-gray-900 font-bold text-[11px] uppercase tracking-wider group-hover:bg-gray-200 transition-colors">Pilih File</div>
+                    <span className="truncate">{uploadFile ? uploadFile.name : 'Tidak ada file yang dipilih'}</span>
+                  </div>
+                </div>
+                <p className="text-[10px] text-gray-400 mt-1.5">Kosongkan jika tidak ingin mengubah logo saat ini.</p>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-500 mb-1">Urutan Tampil</label>
+                <input type="number" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm" 
+                       value={formData.order || 0} onChange={e => setFormData({...formData, order: parseInt(e.target.value) || 0})} />
+              </div>
+              <div className="flex items-center gap-2 mt-2">
+                <input type="checkbox" id="active" checked={formData.is_active ?? true} 
+                       onChange={e => setFormData({...formData, is_active: e.target.checked})} />
+                <label htmlFor="active" className="text-sm font-medium text-gray-900">Aktif (Tampil di website)</label>
+              </div>
+              <div className="flex gap-3 pt-4">
+                <button type="submit" disabled={uploading} className="bg-[#c29631] text-white px-4 py-2 rounded-lg text-sm font-bold disabled:opacity-50 flex-1">
+                  {uploading ? 'Menyimpan...' : 'Simpan'}
+                </button>
+                <button type="button" onClick={() => setIsEditing(false)} disabled={uploading} className="bg-gray-100 text-gray-900 px-4 py-2 rounded-lg text-sm font-bold hover:bg-gray-200 disabled:opacity-50 flex-1">
+                  Batal
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
     </AdminLayout>
   );

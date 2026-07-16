@@ -64,14 +64,14 @@ export default function About() {
           <h2 className="font-bold text-white mb-8" style={{ fontSize: 'clamp(1.5rem,4vw,2.5rem)', letterSpacing: '-0.04em' }}>Di balik lensa</h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {TEAM_MEMBERS.map((m, i) => (
-              <div key={i} className="group rounded-2xl overflow-hidden bg-[#1a1a1a] border border-[#2a2a2a]">
-                <div className="aspect-square overflow-hidden">
-                  <img src={m.photo} alt={m.name} className="w-full h-full object-cover opacity-70 group-hover:opacity-90 group-hover:scale-105 transition-all duration-500" />
+              <div key={i} className="flex flex-col gap-4">
+                <div className="aspect-[4/5] overflow-hidden rounded-2xl bg-[#1a1a1a]">
+                  <img src={m.photo} alt={m.name} className="w-full h-full object-cover transition-transform duration-500 hover:scale-[1.02]" />
                 </div>
-                <div className="p-4">
-                  <p className="text-xs font-bold text-white">{m.name}</p>
-                  <p className="text-[9px] text-[#e8b84b] uppercase tracking-wider font-bold mb-1">{m.role}</p>
-                  <p className="text-[10px] text-[#888] leading-relaxed">{m.bio}</p>
+                <div>
+                  <p className="text-sm font-bold text-white mb-1">{m.name}</p>
+                  <p className="text-[10px] text-[#e8b84b] uppercase tracking-wider font-bold mb-2">{m.role}</p>
+                  <p className="text-xs text-[#888] leading-relaxed">{m.bio}</p>
                 </div>
               </div>
             ))}

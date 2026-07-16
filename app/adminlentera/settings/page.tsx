@@ -43,55 +43,55 @@ export default function SettingsAdmin() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-2xl font-bold font-heading text-text-primary mb-1">Pengaturan Web</h1>
-          <p className="text-sm text-text-secondary">Kelola teks judul dan video banner halaman depan.</p>
+          <h1 className="text-2xl font-bold font-heading text-gray-900 mb-1">Pengaturan Web</h1>
+          <p className="text-sm text-gray-500">Kelola teks judul dan video banner halaman depan.</p>
         </div>
       </div>
 
-      <div className="bg-bg-surface p-8 rounded-xl border border-border">
+      <div className="bg-white p-8 rounded-xl border border-gray-200">
         <form onSubmit={handleSave} className="space-y-6">
           
           <div className="space-y-4">
-            <h2 className="text-xl font-bold text-text-primary border-b pb-2">Hero Banner Section</h2>
+            <h2 className="text-xl font-bold text-gray-900 border-b pb-2">Hero Banner Section</h2>
             
             <div>
-              <label className="block text-sm font-medium text-text-primary mb-1">Hero Title (Headline)</label>
+              <label className="block text-sm font-medium text-gray-900 mb-1">Hero Title (Headline)</label>
               <input 
                 type="text" 
                 value={settings.hero_title} 
                 onChange={e => setSettings({...settings, hero_title: e.target.value})}
-                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-black outline-none bg-bg-surface text-black"
+                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-black outline-none bg-white text-black"
                 placeholder="Timeless Wedding & Cinematic Event"
                 required
               />
-              <p className="text-xs text-text-secondary mt-1">The main big text displayed on the homepage.</p>
+              <p className="text-xs text-gray-500 mt-1">The main big text displayed on the homepage.</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-text-primary mb-1">Hero Subtitle</label>
+              <label className="block text-sm font-medium text-gray-900 mb-1">Hero Subtitle</label>
               <textarea 
                 value={settings.hero_subtitle} 
                 onChange={e => setSettings({...settings, hero_subtitle: e.target.value})}
-                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-black outline-none h-24 bg-bg-surface text-black"
+                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-black outline-none h-24 bg-white text-black"
                 placeholder="Description below the headline..."
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-text-primary mb-1">Background Video URL</label>
+              <label className="block text-sm font-medium text-gray-900 mb-1">Background Video URL</label>
               <input 
                 type="url" 
                 value={settings.hero_video_url} 
                 onChange={e => setSettings({...settings, hero_video_url: e.target.value})}
-                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-black outline-none bg-bg-surface text-black"
+                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-black outline-none bg-white text-black"
                 placeholder="https://...mp4"
                 required
               />
-              <p className="text-xs text-text-secondary mt-1">Direct link to an mp4 video file. This plays silently in the background.</p>
+              <p className="text-xs text-gray-500 mt-1">Direct link to an mp4 video file. This plays silently in the background.</p>
               
               {settings.hero_video_url && (
-                <div className="mt-4 aspect-video rounded-lg overflow-hidden bg-[#222] border relative max-w-sm">
+                <div className="mt-4 aspect-video rounded-lg overflow-hidden bg-gray-100 border relative max-w-sm">
                   <video src={settings.hero_video_url} autoPlay muted loop className="w-full h-full object-cover" />
                   <div className="absolute top-2 left-2 bg-black/60 text-white text-xs px-2 py-1 rounded backdrop-blur">Preview</div>
                 </div>

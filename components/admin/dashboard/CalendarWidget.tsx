@@ -19,9 +19,9 @@ export default function CalendarWidget({
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: 0.6 }}
-      className="p-7 rounded-3xl bg-bg-surface border border-border/50 shadow-sm flex flex-col h-full"
+      className="p-7 rounded-3xl bg-white border border-gray-100 shadow-sm flex flex-col h-full"
     >
-      <div className="border-b border-border/40 pb-5 mb-5 flex-shrink-0">
+      <div className="border-b border-gray-200/40 pb-5 mb-5 flex-shrink-0">
         <h3 className="text-base font-bold font-heading text-center flex items-center justify-center gap-2">
           <CalendarIcon className="w-5 h-5 text-accent-primary" />
           Kalender {monthNames[month]} {year}
@@ -29,7 +29,7 @@ export default function CalendarWidget({
       </div>
 
       {/* Days Header */}
-      <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-text-secondary uppercase mb-2 flex-shrink-0">
+      <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-gray-500 uppercase mb-2 flex-shrink-0">
         <span>Sen</span>
         <span>Sel</span>
         <span>Rab</span>
@@ -48,7 +48,7 @@ export default function CalendarWidget({
 
           const isToday = day === today.getDate();
 
-          let dayBg = 'text-text-secondary hover:bg-bg-elevated';
+          let dayBg = 'text-gray-500 hover:bg-gray-50';
 
           if (isToday) {
             dayBg = 'bg-accent-primary/10 text-accent-primary font-bold border-accent-primary/30 ring-1 ring-accent-primary/20';
@@ -66,18 +66,18 @@ export default function CalendarWidget({
       </div>
 
       {/* Calendar Legend */}
-      <div className="pt-5 mt-auto border-t border-border/40 text-[10px] text-text-secondary space-y-2.5">
-        <div className="flex items-center gap-2 bg-bg-elevated/30 p-1.5 rounded-lg border border-border/20">
+      <div className="pt-5 mt-auto border-t border-gray-200/40 text-[10px] text-gray-500 space-y-2.5">
+        <div className="flex items-center gap-2 bg-gray-50/30 p-1.5 rounded-lg border border-gray-200/20">
           <span className="w-3.5 h-3.5 rounded-md bg-success shadow-sm shadow-success/20 flex-shrink-0" />
           <span className="font-medium">Terkonfirmasi (Confirmed)</span>
         </div>
-        <div className="flex items-center gap-2 bg-bg-elevated/30 p-1.5 rounded-lg border border-border/20">
+        <div className="flex items-center gap-2 bg-gray-50/30 p-1.5 rounded-lg border border-gray-200/20">
           <span className="w-3.5 h-3.5 rounded-md bg-warning/30 border border-warning/40 flex-shrink-0" />
           <span className="font-medium">Menunggu (Pending)</span>
         </div>
-        <div className="flex items-center gap-2 bg-bg-elevated/30 p-1.5 rounded-lg border border-border/20">
+        <div className="flex items-center gap-2 bg-gray-50/30 p-1.5 rounded-lg border border-gray-200/20">
           <span className="w-3.5 h-3.5 rounded-md bg-danger shadow-sm shadow-danger/20 flex-shrink-0 flex items-center justify-center ring-2 ring-danger/30">
-            <span className="w-1 h-1 bg-bg-surface rounded-full" />
+            <span className="w-1 h-1 bg-white rounded-full" />
           </span>
           <span className="font-medium">Bentrok (Lebih dari 1 confirmed)</span>
         </div>
